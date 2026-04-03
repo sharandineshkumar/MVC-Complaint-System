@@ -1,0 +1,117 @@
+# MVC Complaint System — Master Context
+
+## Project Overview
+ASP.NET Core MVC Complaint Management System
+- Citizens register, login, submit complaints
+- Admins view all complaints, edit status, delete
+- Built with .NET 10, EF Core, SQL Server, Bootstrap 5
+- Cookie Authentication, SHA256 password hashing
+
+## Current Status
+- Models          ✓ done and working
+- Controllers     ✓ done and working
+- Views           ✓ done and working
+- Registration    ✓ working
+- Login           ✓ working
+- Cookie auth     ✓ working
+- Admin features  ✓ working
+- DB Migration    ✓ applied
+
+## Database
+- Server: localhost\SQLEXPRESS
+- Database: ComplaintSystemDB
+- Tables: Users, Complaints
+
+## User Roles
+- Citizen → register, login, submit complaints,
+  view OWN complaints only, edit OWN complaints
+- Admin → view ALL complaints, edit status, delete
+- Admin role set manually in SSMS:
+  UPDATE Users SET Role = 'Admin' WHERE Email = 'youremail@gmail.com'
+
+## Important Fixes Already Applied
+- ModelState.Remove("PasswordHash") in Register POST
+- ModelState.Remove("CreatedOn") in Register POST
+- Register form asp-action points to Register not Login
+
+## Code Style Rules
+- ALWAYS keep code simple and easy to understand
+- NEVER write complex code
+- Basic clean straightforward code only
+- Beginner friendly code at all times
+- Simple meaningful variable names
+
+## UI Style Rules
+- Simple and minimalist design
+- Government website feel
+- Clean formal professional look
+- No flashy animations or effects
+- Simple color scheme — whites blues grays
+- Basic Bootstrap 5 only
+- No complex CSS or extra libraries
+- Learner friendly UI code
+
+## Files in this Project
+Controllers:
+- AccountController.cs
+- ComplaintsController.cs
+
+Models:
+- Complaint.cs
+- User.cs
+
+Data:
+- AppDbContext.cs
+
+Config:
+- Program.cs
+- appsettings.json
+
+Views:
+- _Layout.cshtml
+- _ViewImports.cshtml
+- _ViewStart.cshtml
+- Login.cshtml
+- Register.cshtml
+- Index.cshtml
+- Create.cshtml
+- Details.cshtml
+- Edit.cshtml
+
+## Chat Sections
+- MODELS chat      → Complaint.cs, User.cs
+- CONTROLLERS chat → AccountController, ComplaintsController
+- VIEWS chat       → all .cshtml files
+- DATABASE chat    → AppDbContext, migrations, Program.cs
+- FEATURES chat    → new features implementation
+- UI chat          → complete UI redesign
+
+## New Features to Build
+- [ ] Feature 1 → Citizen sees ONLY their own complaints
+                  Filter by logged in user name
+                  Admin still sees all complaints
+- [ ] Feature 2 → Citizen can edit their own complaint
+                  Citizen edits own only
+                  Admin edits anyone
+- [ ] Feature 3 → Government portal redirect Option C
+                  Button always visible on Index page
+                  Auto opens portal after complaint submit
+                  Portal URL: https://pgportal.gov.in
+- [ ] Feature 4 → Complete UI overhaul
+                  Simple minimalist government website feel
+                  Clean professional Bootstrap 5 design
+
+- [ ] Feature 5 → Smart portal redirect based on complaint category
+                  Roads/Water/Sanitation → https://www.tn.gov.in/grievance
+                  Electricity → https://www.tnebltd.gov.in/cgrfonline/
+                  Police/Crime → https://eservices.tnpolice.gov.in
+                  Default fallback → https://pgportal.gov.in
+                  Redirect happens after complaint submit
+                  Change RedirectToPortal view and controller
+
+## How to Continue in New Chat
+Start new chat inside Pro MVC project with:
+
+"Read CONTEXT.md first.
+I am continuing from previous session.
+Today I want to work on [what you want]."

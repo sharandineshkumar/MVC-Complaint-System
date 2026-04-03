@@ -1,0 +1,100 @@
+﻿@model Complaint
+
+@{
+    ViewData["Title"] = "Edit Complaint";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Update Complaint Status</span>
+                <a asp-controller="Complaints" asp-action="Index" class="btn btn-sm btn-outline-light">
+                    Back to List
+                </a>
+            </div>
+            <div class="card-body p-0">
+
+                <table class="table table-bordered mb-0" style="font-size:14px;">
+                    <tr>
+                        <th style="width:150px; background:#f4f6f8; font-size:13px;">Complaint ID</th>
+                        <td>#@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Title</th>
+                        <td>@Model.Title</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Description</th>
+                        <td style="white-space:pre-wrap;">@Model.Description</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Submitted By</th>
+                        <td>@Model.SubmittedBy</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Category</th>
+                        <td>@Model.Category</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Current Status</th>
+                        <td>
+                            @if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (Model.Status == "InProgress")
+                            {
+                                <span class="badge bg-primary">In Progress</span>
+                            }
+                            else if (Model.Status == "Resolved")
+                            {
+                                <span class="badge bg-success">Resolved</span>
+                            }
+                            else if (Model.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="card-footer" style="background:#f4f6f8;">
+                <form method="post"
+                      asp-controller="Complaints"
+                      asp-action="Edit"
+                      asp-route-id="@Model.Id">
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 mb-3" style="font-size:13px;"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label">Update Status</label>
+                        <select asp-for="Status" class="form-select">
+                            <option value="Pending">Pending</option>
+                            <option value="InProgress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning px-4">
+                            Update Status
+                        </button>
+                        <a asp-controller="Complaints" asp-action="Index" class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

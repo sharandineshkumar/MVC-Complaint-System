@@ -1,0 +1,93 @@
+﻿@model Complaint
+
+@{
+    ViewData["Title"] = "Complaint Details";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card mt-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Complaint Details</span>
+                <a asp-controller="Complaints" asp-action="Index" class="btn btn-sm btn-outline-light">
+                    Back to List
+                </a>
+            </div>
+            <div class="card-body p-0">
+
+                <table class="table table-bordered mb-0" style="font-size:14px;">
+                    <tr>
+                        <th style="width:170px; background:#f4f6f8; font-size:13px;">Complaint ID</th>
+                        <td>@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Title</th>
+                        <td>@Model.Title</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Description</th>
+                        <td style="white-space:pre-wrap;">@Model.Description</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Category</th>
+                        <td>@Model.Category</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Submitted By</th>
+                        <td>@Model.SubmittedBy</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Submitted On</th>
+                        <td>@Model.datetime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                    </tr>
+                    <tr>
+                        <th style="background:#f4f6f8; font-size:13px;">Status</th>
+                        <td>
+                            @if (Model.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (Model.Status == "InProgress")
+                            {
+                                <span class="badge bg-primary">In Progress</span>
+                            }
+                            else if (Model.Status == "Resolved")
+                            {
+                                <span class="badge bg-success">Resolved</span>
+                            }
+                            else if (Model.Status == "Rejected")
+                            {
+                                <span class="badge bg-danger">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@Model.Status</span>
+                            }
+                        </td>
+                    </tr>
+                    @if (Model.UpdatedOn != null)
+                    {
+                        <tr>
+                            <th style="background:#f4f6f8; font-size:13px;">Last Updated</th>
+                            <td>@Model.UpdatedOn.Value.ToString("dd MMM yyyy, hh:mm tt")</td>
+                        </tr>
+                    }
+                </table>
+
+            </div>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="card-footer" style="background:#f4f6f8;">
+                    <a asp-controller="Complaints"
+                           asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-warning btn-sm px-4">
+                        Edit Status
+                    </a>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

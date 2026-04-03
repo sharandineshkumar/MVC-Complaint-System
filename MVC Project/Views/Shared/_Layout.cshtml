@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Citizen Complaint Portal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <div class="top-strip">
+        Government of India &nbsp;|&nbsp; Official Citizen Services Portal
+    </div>
+
+    <div class="gov-header">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <div class="gov-emblem">CS</div>
+                <div>
+                    <div class="portal-title">Citizen Complaint Management Portal</div>
+                    <div class="portal-subtitle">Ministry of Public Grievances &amp; Administration</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="gov-navbar">
+        <div class="container">
+            <ul class="nav">
+                @if (User.Identity.IsAuthenticated)  
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Complaints" asp-action="Index">All Complaints</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Complaints" asp-action="Create">Submit Complaint</a>
+                    </li>
+                    <li class="nav-item ms-auto">
+                        <span class="user-info">Logged in as: @User.Identity.Name</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+
+    <footer class="gov-footer">
+        <div class="container">
+            &copy; @DateTime.Now.Year — Citizen Complaint Portal &nbsp;|&nbsp; All Rights Reserved &nbsp;|&nbsp; Government of India
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

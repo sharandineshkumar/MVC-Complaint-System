@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Complaint Submitted";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+
+        <div class="card mt-5 text-center">
+            <div class="card-header">
+                Complaint Submitted Successfully
+            </div>
+            <div class="card-body p-5">
+
+                <h4 class="text-success mb-2">✅ Your complaint has been recorded.</h4>
+
+                <p class="text-muted mb-4" style="font-size:14px;">
+                    Category: <strong>@ViewBag.Category</strong> &nbsp;|&nbsp; Complaint ID: <strong>#@ViewBag.ComplaintId</strong>
+                </p>
+
+                <b class="mb-4" style="font-size:30px;">
+                    What would you like to do next </b>
+
+                <div class="d-flex flex-column gap-2" >  @*creating a flexbox container *@
+
+                    
+                    <a href="@ViewBag.PortalUrl"
+                           target="_blank"
+                           class="btn btn-primary btn-lg">
+                        🌐 Click Here to Official Portal
+                    </a>
+
+                    
+
+                
+
+                    
+                    <a asp-controller="Complaints"
+                           asp-action="CitizenEdit"
+                           asp-route-id="@ViewBag.ComplaintId"
+                           class="btn btn-outline-secondary btn-lg">
+                        📋 View &amp; Edit My Submitted Complaint
+                    </a>
+
+                    
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Complaints" asp-action="Index" style="font-size:13px; color:#003580;">
+                ← Back to All My Complaints
+            </a>
+        </div>
+
+    </div>
+</div>
+

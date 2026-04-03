@@ -1,0 +1,191 @@
+:root {
+    --gov-blue: #003580;
+    --gov-blue-light: #1a4f99;
+    --gov-accent: #c8102e;
+    --gov-gray: #f4f6f8;
+    --gov-border: #d0d7de;
+    --gov-text: #1a1a2e;
+    --gov-muted: #6b7280;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f2f5;
+    color: var(--gov-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6,
+.card-header,
+.portal-title,
+.gov-navbar .nav-link {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.top-strip {
+    background-color: var(--gov-blue);
+    color: white;
+    font-size: 12px;
+    padding: 4px 0;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.gov-header {
+    background-color: white;
+    border-bottom: 3px solid var(--gov-accent);
+    padding: 14px 0;
+}
+
+    .gov-header .portal-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gov-blue);
+        letter-spacing: 0.3px;
+        font-family: Georgia, 'Times New Roman', Times, serif;
+    }
+
+    .gov-header .portal-subtitle {
+        font-size: 12px;
+        color: var(--gov-muted);
+        margin-top: 2px;
+    }
+
+.gov-emblem {
+    width: 52px;
+    height: 52px;
+    background-color: var(--gov-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 14px;
+    flex-shrink: 0;
+}
+
+.gov-navbar {
+    background-color: var(--gov-blue);
+    padding: 0;
+}
+
+    .gov-navbar .nav-link {
+        color: rgba(255,255,255,0.85) !important;
+        font-size: 13px;
+        padding: 12px 18px !important;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        transition: background 0.15s;
+        letter-spacing: 0.3px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+        .gov-navbar .nav-link:hover {
+            background-color: var(--gov-blue-light);
+            color: white !important;
+        }
+
+    .gov-navbar .user-info {
+        color: rgba(255,255,255,0.7);
+        font-size: 12px;
+        padding: 12px 18px;
+        border-left: 1px solid rgba(255,255,255,0.15);
+    }
+
+.main-content {
+    min-height: calc(100vh - 200px);
+    padding: 28px 0;
+}
+
+.gov-footer {
+    background-color: var(--gov-blue);
+    color: rgba(255,255,255,0.75);
+    font-size: 12px;
+    padding: 16px 0;
+    margin-top: 40px;
+    text-align: center;
+    border-top: 3px solid var(--gov-accent);
+}
+
+.card {
+    border: 1px solid var(--gov-border);
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.card-header {
+    background-color: var(--gov-blue);
+    color: white;
+    border-radius: 3px 3px 0 0 !important;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.btn {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.btn-primary {
+    background-color: var(--gov-blue);
+    border-color: var(--gov-blue);
+}
+
+    .btn-primary:hover {
+        background-color: var(--gov-blue-light);
+        border-color: var(--gov-blue-light);
+    }
+
+.btn-warning {
+    background-color: #e6a817;
+    border-color: #e6a817;
+    color: #1a1a2e;
+}
+
+.btn-danger {
+    background-color: var(--gov-accent);
+    border-color: var(--gov-accent);
+}
+
+.table thead th {
+    background-color: var(--gov-blue);
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: none;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #eaf0fb;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--gov-text);
+    letter-spacing: 0.2px;
+}
+
+.form-control, .form-select {
+    border: 1px solid var(--gov-border);
+    border-radius: 3px;
+    font-size: 14px;
+    padding: 8px 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--gov-blue);
+        box-shadow: 0 0 0 2px rgba(0,53,128,0.12);
+    }
