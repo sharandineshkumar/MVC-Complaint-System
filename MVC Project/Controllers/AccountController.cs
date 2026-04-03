@@ -1,29 +1,25 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using MVC_Project.Data;
 using MVC_Project.Models;
+using MVC_Project.Services;
 using System.Security.Claims;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
-using static System.Net.WebRequestMethods;
 
 namespace MVC_Project.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly IUserService _userService;
 
-        public AccountController(AppDbContext db)
+        public AccountController(IUserService userService)
         {
-            _db = db;
+            _userService = userService;
         }
-
 
         public IActionResult Register()
         {
             return View();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Register(User user, string password)
@@ -31,47 +27,33 @@ namespace MVC_Project.Controllers
             ModelState.Remove("PasswordHash");
             ModelState.Remove("CreatedOn");
 
-            if (!ModelState.IsValid)    
-                return View(user);    
+            if (!ModelState.IsValid)
+                return View(user);
 
-            bool emailExists = _db.Users.Any(u => u.Email == user.Email);
-            if (emailExists)
+            if (_userService.EmailExists(user.Email))
             {
                 ModelState.AddModelError("Email", "Email already registered.");
                 return View(user);
             }
 
-            user.PasswordHash = password;
-            user.CreatedOn = DateTime.Now;
-            user.Role = "Citizen";
-
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
+            _userService.RegisterUser(user, password);
 
             return RedirectToAction("Login");
         }
-
 
         public IActionResult Login()
         {
             return View();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
+            var user = _userService.GetUserByEmailAndPassword(email, password);
 
             if (user == null)
             {
-                ModelState.AddModelError("email", "No account found with this email.");
-                return View();
-            }
-
-            if (user.PasswordHash != password)
-            {
-                ModelState.AddModelError("password", "Incorrect password.");
+                ModelState.AddModelError("", "Invalid Email or Password");
                 return View();
             }
 
@@ -85,10 +67,7 @@ namespace MVC_Project.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal
-            );
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return RedirectToAction("Index", "Complaints");
         }

@@ -1,69 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using MVC_Project.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MVC_Project.Models;
+using MVC_Project.Services;
 
 namespace MVC_Project.Controllers
 {
     public class ComplaintsController : Controller
     {
-        private readonly AppDbContext _db;
+        private readonly IComplaintService _complaintService;
 
-        public ComplaintsController(AppDbContext db)
+        public ComplaintsController(IComplaintService complaintService)
         {
-            _db = db;
+            _complaintService = complaintService;
         }
-
 
         [Authorize]
         public IActionResult Index()
         {
-            if (User.IsInRole("Admin"))  
-            {
-                var allComplaints = _db.Complaints.ToList();
-                return View(allComplaints);
-            }
-            
-            var userName = User.Identity.Name;
-            var myComplaints = _db.Complaints
-                .Where(c => c.SubmittedBy == userName)
-                .ToList();
+            if (User.IsInRole("Admin"))
+                return View(_complaintService.GetAllComplaints());
 
-            return View(myComplaints);
+            var userName = User.Identity.Name;
+            return View(_complaintService.GetComplaintsByUser(userName));
         }
 
-
-        [Authorize] 
-        public IActionResult Create()  
+        [Authorize]
+        public IActionResult Create()
         {
             if (User.IsInRole("Admin"))
                 return RedirectToAction("Index");
-            else
 
             return View();
         }
 
-   
-
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(Complaint complaint)
+        public IActionResult Create(Complaint complaint)
         {
-            complaint.datetime = DateTime.Now;
-            complaint.Status = "Pending";
-            complaint.SubmittedBy = User.Identity.Name; 
-
-            _db.Complaints.Add(complaint);
-            await _db.SaveChangesAsync();
-
+            _complaintService.AddComplaint(complaint, User.Identity.Name);
             return RedirectToAction("RedirectToPortal", new { category = complaint.Category, id = complaint.Id });
         }
-
 
         [Authorize]
         public IActionResult RedirectToPortal(string category, int id)
         {
-
             string portalUrl;
 
             if (category == "Roads" || category == "Water" || category == "Sanitation")
@@ -72,7 +52,6 @@ namespace MVC_Project.Controllers
                 portalUrl = "https://www.tnebltd.gov.in/cgrfonline/";
             else
                 portalUrl = "https://maduraicorporation.co.in/";
-
 
             ViewBag.PortalUrl = portalUrl;
             ViewBag.ComplaintId = id;
@@ -84,105 +63,68 @@ namespace MVC_Project.Controllers
         [Authorize]
         public IActionResult Details(int id)
         {
-            var complaint = _db.Complaints.FirstOrDefault(c => c.Id == id);
+            var complaint = _complaintService.GetComplaintById(id);
             if (complaint == null)
                 return NotFound();
-            else
-                return View(complaint);
-        }
 
-
-        [Authorize(Roles = "Admin")]   
-        public IActionResult Edit(int id)
-        {
-            var complaint = _db.Complaints.FirstOrDefault(c => c.Id == id);
-            if (complaint == null)
-                return NotFound();
             return View(complaint);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult Edit(int id)
+        {
+            var complaint = _complaintService.GetComplaintById(id);
+            if (complaint == null)
+                return NotFound();
 
-        [Authorize(Roles = "Admin")]   
+            return View(complaint);
+        }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Complaint complaint)
+        public IActionResult Edit(int id, Complaint complaint)
         {
             ModelState.Remove("Title");
             ModelState.Remove("Description");
             ModelState.Remove("Category");
             ModelState.Remove("SubmittedBy");
 
-            
-
-            var existing = _db.Complaints.FirstOrDefault(c => c.Id == id);
-            if (existing == null)
-                return NotFound();
-
-            existing.Status = complaint.Status;
-            existing.UpdatedOn = DateTime.Now;
-
-            await _db.SaveChangesAsync();
+            _complaintService.UpdateStatus(id, complaint.Status);
 
             return RedirectToAction("Index");
         }
 
-        
-        [Authorize(Roles = "Admin")]   
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var complaint = _db.Complaints.FirstOrDefault(c => c.Id == id);
-
-            if (complaint == null)
-                return NotFound();
-
-            _db.Complaints.Remove(complaint);
-            await _db.SaveChangesAsync();
+            _complaintService.DeleteComplaint(id);
             return RedirectToAction("Index");
         }
 
-        
-        [Authorize]  
+        [Authorize]
         public IActionResult CitizenEdit(int id)
         {
-            
-            var complaint = _db.Complaints
-                .FirstOrDefault(c => c.Id == id );
-
+            var complaint = _complaintService.GetComplaintById(id);
             if (complaint == null)
                 return Forbid();
 
             return View(complaint);
         }
 
-
         [Authorize]
-        [HttpPost]                                                                 
-        public async Task<IActionResult> CitizenEdit(int id, Complaint complaint)
+        [HttpPost]
+        public IActionResult CitizenEdit(int id, Complaint complaint)
         {
-            
-
-            var existing = _db.Complaints
-                .FirstOrDefault(c => c.Id == id );
-
-            if (existing == null)
-                return Forbid();  
-
-            ModelState.Remove("Status");   
+            ModelState.Remove("Status");
             ModelState.Remove("SubmittedBy");
 
             if (!ModelState.IsValid)
                 return View(complaint);
 
-            existing.Title = complaint.Title;
-            existing.Description = complaint.Description;
-            existing.Category = complaint.Category;
-            existing.UpdatedOn = DateTime.Now;
-
-            await _db.SaveChangesAsync();
+            _complaintService.UpdateComplaintDetails(id, complaint.Title, complaint.Description, complaint.Category);
 
             return RedirectToAction("Index");
         }
     }
 }
-
-
