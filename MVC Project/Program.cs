@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.Data;
+using MVC_Project.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+// Register services here
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
