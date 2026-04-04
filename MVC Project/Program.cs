@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using MVC_Project.Data;
 using MVC_Project.Services;
-using MVC_Project.Hubs;                          // ADD THIS
+using MVC_Project.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddSignalR();                   // ADD THIS
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();  // ADD THIS
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -36,6 +37,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Complaints}/{action=Index}/{id?}");
 
-app.MapHub<NotificationHub>("/notificationHub");  // ADD THIS
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
