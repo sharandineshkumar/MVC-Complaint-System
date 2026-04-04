@@ -5,17 +5,23 @@ ASP.NET Core MVC Complaint Management System
 - Citizens register, login, submit complaints
 - Admins view all complaints, edit status, delete
 - Built with .NET 10, EF Core, SQL Server, Bootstrap 5
-- Cookie Authentication, SHA256 password hashing
+- Cookie Authentication
+- Password stored as plain text (PasswordHash field used, no hashing applied yet)
 
 ## Current Status
-- Models          ✓ done and working
-- Controllers     ✓ done and working
-- Views           ✓ done and working
-- Registration    ✓ working
-- Login           ✓ working
-- Cookie auth     ✓ working
-- Admin features  ✓ working
-- DB Migration    ✓ applied
+- Models             ✓ done and working
+- Controllers        ✓ done and working
+- Views              ✓ done and working
+- Registration       ✓ working
+- Login              ✓ working
+- Cookie auth        ✓ working
+- Admin features     ✓ working
+- DB Migration       ✓ applied
+- Feature 1          ✓ done — Citizen sees only their own complaints
+- Feature 2          ✓ done — Citizen can edit their own complaint (Title, Description, Category only)
+- Feature 3          ✓ done — Smart portal redirect after complaint submit (category-based)
+- Feature 4          ✓ done — Government website UI overhaul (Bootstrap 5, blues/whites/grays)
+- Feature 5          ✓ done — Smart portal redirect merged into Feature 3
 
 ## Database
 - Server: localhost\SQLEXPRESS
@@ -24,8 +30,8 @@ ASP.NET Core MVC Complaint Management System
 
 ## User Roles
 - Citizen → register, login, submit complaints,
-  view OWN complaints only, edit OWN complaints
-- Admin → view ALL complaints, edit status, delete
+  view OWN complaints only, edit OWN complaints (Title, Description, Category)
+- Admin → view ALL complaints, edit status, delete any complaint
 - Admin role set manually in SSMS:
   UPDATE Users SET Role = 'Admin' WHERE Email = 'youremail@gmail.com'
 
@@ -33,6 +39,8 @@ ASP.NET Core MVC Complaint Management System
 - ModelState.Remove("PasswordHash") in Register POST
 - ModelState.Remove("CreatedOn") in Register POST
 - Register form asp-action points to Register not Login
+- ModelState.Remove("Title","Description","Category","SubmittedBy") in Admin Edit POST
+- ModelState.Remove("Status","SubmittedBy") in CitizenEdit POST
 
 ## Code Style Rules
 - ALWAYS keep code simple and easy to understand
@@ -46,72 +54,156 @@ ASP.NET Core MVC Complaint Management System
 - Government website feel
 - Clean formal professional look
 - No flashy animations or effects
-- Simple color scheme — whites blues grays
+- Simple color scheme — whites, blues, grays
 - Basic Bootstrap 5 only
 - No complex CSS or extra libraries
 - Learner friendly UI code
 
 ## Files in this Project
-Controllers:
+
+### Controllers
 - AccountController.cs
 - ComplaintsController.cs
 
-Models:
+### Models
 - Complaint.cs
 - User.cs
+- ErrorViewModel.cs
 
-Data:
+### Services
+- IUserService.cs
+- UserService.cs
+- IComplaintService.cs
+- ComplaintService.cs
+
+### Data
 - AppDbContext.cs
 
-Config:
+### Config
 - Program.cs
 - appsettings.json
+- appsettings.Development.json
 
-Views:
-- _Layout.cshtml
-- _ViewImports.cshtml
-- _ViewStart.cshtml
+### Views — Account
 - Login.cshtml
 - Register.cshtml
+
+### Views — Complaints
 - Index.cshtml
 - Create.cshtml
 - Details.cshtml
-- Edit.cshtml
+- Edit.cshtml           → Admin only — update Status
+- CitizenEdit.cshtml   → Citizen only — edit Title, Description, Category
+- RedirectToPortal.cshtml → shown after complaint submit, links to govt portal
+
+### Views — Shared
+- _Layout.cshtml
+- _ViewStart.cshtml
+- _ViewImports.cshtml
+- _ValidationScriptsPartial.cshtml
+- Error.cshtml
+
+### Views — Home
+- Index.cshtml
+- Privacy.cshtml
+
+## Features Completed
+
+### Feature 1 — Citizen sees only their own complaints
+- ComplaintsController Index() checks User.IsInRole("Admin")
+- Admin → GetAllComplaints()
+- Citizen → GetComplaintsByUser(User.Identity.Name)
+- ComplaintService.GetComplaintsByUser() filters by SubmittedBy == userName
+
+### Feature 2 — Citizen can edit their own complaint
+- New CitizenEdit GET and POST actions in ComplaintsController
+- Citizens can only edit Title, Description, Category
+- Status field is locked for citizens
+- New CitizenEdit.cshtml view created
+- Index.cshtml shows Edit button for citizens → goes to CitizenEdit
+- Index.cshtml shows Edit button for Admin → goes to Admin Edit (status only)
+- ComplaintService.UpdateComplaintDetails() handles citizen edit save
+- UpdatedOn timestamp is set on every citizen edit
+
+### Feature 3 + 5 — Smart portal redirect after complaint submit
+- After Create POST, redirects to RedirectToPortal action
+- Category-based portal URL logic in ComplaintsController:
+  - Roads / Water / Sanitation → https://cmwssb.tn.gov.in/complaints-grievance
+  - Electricity → https://www.tnebltd.gov.in/cgrfonline/
+  - Default / Other → https://maduraicorporation.co.in/
+- RedirectToPortal.cshtml shows:
+  - Success message with Category and Complaint ID
+  - Button to open official govt portal in new tab
+  - Button to view and edit the submitted complaint (CitizenEdit)
+  - Link to go back to All Complaints
+
+### Feature 4 — Government UI Overhaul
+- _Layout.cshtml updated with:
+  - Top strip: "Government of India | Official Citizen Services Portal"
+  - Gov header with CS emblem, portal title, ministry subtitle
+  - Nav bar with dark government blue color
+  - Logged-in user name shown in nav
+  - Footer with copyright and portal name
+- All views use card-based layout
+- Consistent Bootstrap 5 badge colors for complaint status:
+  - Pending → bg-warning text-dark
+  - InProgress → bg-primary
+  - Resolved → bg-success
+  - Rejected → bg-danger
+
+## Complaint Model Fields
+- Id (int, PK, auto)
+- Title (string, required, max 200)
+- Description (string, required)
+- Category (string, required) — Roads / Water / Electricity / Sanitation / Other
+- Status (string, default "Pending") — Pending / InProgress / Resolved / Rejected
+- SubmittedBy (string, required) — set from User.Identity.Name on submit
+- datetime (DateTime) — set to DateTime.Now on submit
+- UpdatedOn (DateTime?, nullable) — set when Admin or Citizen edits the record
+
+## User Model Fields
+- Id (int, PK, auto)
+- FullName (string, required)
+- Email (string, required, email format)
+- PasswordHash (string, required) — plain text currently, no hashing applied
+- Role (string, default "Citizen")
+- CreatedOn (DateTime, default DateTime.Now)
+
+## Portal URL Routing Logic (ComplaintsController)
+  if (category == "Roads" || category == "Water" || category == "Sanitation")
+      portalUrl = "https://cmwssb.tn.gov.in/complaints-grievance";
+  else if (category == "Electricity")
+      portalUrl = "https://www.tnebltd.gov.in/cgrfonline/";
+  else
+      portalUrl = "https://maduraicorporation.co.in/";
+
+## Program.cs Setup
+- AddControllersWithViews
+- AddDbContext with SQL Server connection string from appsettings.json
+- AddScoped IUserService → UserService
+- AddScoped IComplaintService → ComplaintService
+- AddAuthentication with CookieAuthenticationDefaults
+  - LoginPath = /Account/Login
+  - ExpireTimeSpan = 8 hours
+- Middleware order: UseHttpsRedirection → UseStaticFiles → UseRouting → UseAuthentication → UseAuthorization
+- Default route: controller=Complaints, action=Index
 
 ## Chat Sections
-- MODELS chat      → Complaint.cs, User.cs
-- CONTROLLERS chat → AccountController, ComplaintsController
-- VIEWS chat       → all .cshtml files
-- DATABASE chat    → AppDbContext, migrations, Program.cs
-- FEATURES chat    → new features implementation
-- UI chat          → complete UI redesign
+- MODELS chat       → Complaint.cs, User.cs
+- CONTROLLERS chat  → AccountController.cs, ComplaintsController.cs
+- VIEWS chat        → all .cshtml files
+- DATABASE chat     → AppDbContext.cs, migrations, Program.cs
+- FEATURES chat     → new features implementation
+- UI chat           → complete UI redesign
 
-## New Features to Build
-- [ ] Feature 1 → Citizen sees ONLY their own complaints
-                  Filter by logged in user name
-                  Admin still sees all complaints
-- [ ] Feature 2 → Citizen can edit their own complaint
-                  Citizen edits own only
-                  Admin edits anyone
-- [ ] Feature 3 → Government portal redirect Option C
-                  Button always visible on Index page
-                  Auto opens portal after complaint submit
-                  Portal URL: https://pgportal.gov.in
-- [ ] Feature 4 → Complete UI overhaul
-                  Simple minimalist government website feel
-                  Clean professional Bootstrap 5 design
+## Features Still to Build (Backlog)
+* can improve the overall UI of the website A LITTLE BIT ,change the font style into IBM FLEX SANS
+* Citizen cannot edit complaint once Status is no longer "Pending"
 
-- [ ] Feature 5 → Smart portal redirect based on complaint category
-                  Roads/Water/Sanitation → https://www.tn.gov.in/grievance
-                  Electricity → https://www.tnebltd.gov.in/cgrfonline/
-                  Police/Crime → https://eservices.tnpolice.gov.in
-                  Default fallback → https://pgportal.gov.in
-                  Redirect happens after complaint submit
-                  Change RedirectToPortal view and controller
 
 ## How to Continue in New Chat
-Start new chat inside Pro MVC project with:
+Start new chat inside the Pro MVC project with:
 
-"Read CONTEXT.md first.
+"Read PROJECT_CONTEXT.md first.
 I am continuing from previous session.
 Today I want to work on [what you want]."

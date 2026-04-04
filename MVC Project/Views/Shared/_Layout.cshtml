@@ -28,7 +28,7 @@
     <nav class="gov-navbar">
         <div class="container">
             <ul class="nav">
-                @if (User.Identity.IsAuthenticated)  
+                @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Complaints" asp-action="Index">All Complaints</a>
@@ -62,6 +62,23 @@
         </div>
     </div>
 
+    <!-- Toast notification container — shown only to Admin -->
+    @if (User.IsInRole("Admin"))
+    {
+        <div style="position:fixed; top:20px; right:20px; z-index:9999; min-width:300px;">
+            <div id="notificationToast" class="toast align-items-center text-white bg-primary border-0 hide"
+                 role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="toastMessage">
+                        New complaint received.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+
     <footer class="gov-footer">
         <div class="container">
             &copy; @DateTime.Now.Year — Citizen Complaint Portal &nbsp;|&nbsp; All Rights Reserved &nbsp;|&nbsp; Government of India
@@ -70,5 +87,32 @@
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js"></script>
+
+    <!-- SignalR script — only load for Admin -->
+    @if (User.IsInRole("Admin"))
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+        <script>
+            // Connect to the hub
+            var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
+
+            // When server sends a notification, show the toast
+            connection.on("ReceiveNotification", function (message) {
+            document.getElementById("toastMessage").innerText = message;
+
+            var toastEl = document.getElementById("notificationToast");
+            var toast = new bootstrap.Toast(toastEl, { delay: 6000 });
+            toast.show();
+            });
+
+            // Start the connection
+            connection.start().catch(function (err) {
+            console.error("SignalR connection error: " + err.toString());
+            });
+        </script>
+    }
+
 </body>
 </html>

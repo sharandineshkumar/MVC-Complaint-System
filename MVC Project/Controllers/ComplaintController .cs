@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;               // ADD THIS
+using MVC_Project.Hubs;                           // ADD THIS
 using MVC_Project.Models;
 using MVC_Project.Services;
 
@@ -8,10 +10,13 @@ namespace MVC_Project.Controllers
     public class ComplaintsController : Controller
     {
         private readonly IComplaintService _complaintService;
+        private readonly IHubContext<NotificationHub> _hubContext;  // ADD THIS
 
-        public ComplaintsController(IComplaintService complaintService)
+        public ComplaintsController(IComplaintService complaintService,
+                                    IHubContext<NotificationHub> hubContext)  // ADD THIS
         {
             _complaintService = complaintService;
+            _hubContext = hubContext;                                // ADD THIS
         }
 
         [Authorize]
@@ -35,9 +40,16 @@ namespace MVC_Project.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(Complaint complaint)
+        public async Task<IActionResult> Create(Complaint complaint)   // make it async
         {
             _complaintService.AddComplaint(complaint, User.Identity.Name);
+
+            // Notify all connected admin users
+            await _hubContext.Clients.All.SendAsync(
+                "ReceiveNotification",
+                $"New complaint submitted by {User.Identity.Name}: {complaint.Title}"
+            );
+
             return RedirectToAction("RedirectToPortal", new { category = complaint.Category, id = complaint.Id });
         }
 
