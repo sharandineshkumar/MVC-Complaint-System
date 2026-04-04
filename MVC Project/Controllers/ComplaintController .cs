@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;               // ADD THIS
-using MVC_Project.Hubs;                           // ADD THIS
+using Microsoft.AspNetCore.SignalR;
+using MVC_Project.Hubs;
 using MVC_Project.Models;
 using MVC_Project.Services;
 
@@ -10,13 +10,16 @@ namespace MVC_Project.Controllers
     public class ComplaintsController : Controller
     {
         private readonly IComplaintService _complaintService;
-        private readonly IHubContext<NotificationHub> _hubContext;  // ADD THIS
+        private readonly IHubContext<NotificationHub> _hubContext;
+        private readonly INotificationService _notificationService;
 
         public ComplaintsController(IComplaintService complaintService,
-                                    IHubContext<NotificationHub> hubContext)  // ADD THIS
+                                    IHubContext<NotificationHub> hubContext,
+                                    INotificationService notificationService)
         {
             _complaintService = complaintService;
-            _hubContext = hubContext;                                // ADD THIS
+            _hubContext = hubContext;
+            _notificationService = notificationService;
         }
 
         [Authorize]
@@ -40,15 +43,16 @@ namespace MVC_Project.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(Complaint complaint)   // make it async
+        public async Task<IActionResult> Create(Complaint complaint)
         {
             _complaintService.AddComplaint(complaint, User.Identity.Name);
 
-            // Notify all connected admin users
-            await _hubContext.Clients.All.SendAsync(
-                "ReceiveNotification",
-                $"New complaint submitted by {User.Identity.Name}: {complaint.Title}"
-            );
+            // Save notification to database
+            string message = $"New complaint submitted by {User.Identity.Name}: {complaint.Title}";
+            _notificationService.AddNotification(message);
+
+            // Also push real-time via SignalR
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
 
             return RedirectToAction("RedirectToPortal", new { category = complaint.Category, id = complaint.Id });
         }

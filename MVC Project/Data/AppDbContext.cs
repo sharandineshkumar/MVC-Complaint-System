@@ -16,6 +16,10 @@ namespace MVC_Project.Data
     public DbSet<Complaint> Complaints { get; set; }  
 
     public DbSet<User> Users { get; set; }  //represents the Users table in the database. Each User object corresponds to a row in that table.
+    
+
+        public DbSet<Notification> Notifications { get; set; }
     }  
+
 }
 
