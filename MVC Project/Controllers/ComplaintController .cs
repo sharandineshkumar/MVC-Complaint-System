@@ -105,7 +105,8 @@ namespace MVC_Project.Controllers
             ModelState.Remove("Category");
             ModelState.Remove("SubmittedBy");
 
-            _complaintService.UpdateStatus(id, complaint.Status);
+
+            _complaintService.UpdateStatus(id, complaint.Status, complaint.AdminNote);
 
             return RedirectToAction("Index");
         }

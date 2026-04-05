@@ -28,7 +28,7 @@ namespace MVC_Project.Models
         public DateTime? UpdatedOn { get; set; }
         //The ? makes it nullable. New complaints have never been updated — so this is null until admin changes the status.
 
-
+        public string? AdminNote { get; set; }
 
     }
 }

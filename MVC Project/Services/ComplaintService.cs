@@ -39,12 +39,13 @@ namespace MVC_Project.Services
             _db.SaveChanges();
         }
 
-        public void UpdateStatus(int id, string newStatus)
+        public void UpdateStatus(int id, string newStatus, string? adminNote)
         {
             var complaint = _db.Complaints.FirstOrDefault(c => c.Id == id);
             if (complaint == null) return;
 
             complaint.Status = newStatus;
+            complaint.AdminNote = adminNote;
             complaint.UpdatedOn = DateTime.Now;
 
             _db.SaveChanges();
@@ -73,7 +74,3 @@ namespace MVC_Project.Services
         }
     }
 }
-
-
-
-//this is a sample service 

@@ -63,8 +63,20 @@
                             {
                                 <span class="badge bg-secondary">@Model.Status</span>
                             }
+
+
                         </td>
                     </tr>
+
+
+                    @if (!string.IsNullOrEmpty(Model.AdminNote))
+                    {
+                        <tr>
+                            <th style="background:#f4f6f8; font-size:13px;">Admin Note</th>
+                            <td style="color:#374151;">@Model.AdminNote</td>
+                        </tr>
+                    }
+
                     @if (Model.UpdatedOn != null)
                     {
                         <tr>
