@@ -48,5 +48,13 @@ namespace MVC_Project.Services
 
             _db.SaveChanges();
         }
+
+        public void DeleteNotification(int id)
+        {
+            var notif = _db.Notifications.FirstOrDefault(n => n.Id == id);
+            if (notif == null) return;
+            _db.Notifications.Remove(notif);
+            _db.SaveChanges();
+        }
     }
 }

@@ -8,5 +8,7 @@ namespace MVC_Project.Services
         List<Notification> GetAllNotifications();
         int GetUnreadCount();
         void MarkAllAsRead();
+
+        void DeleteNotification(int id);
     }
 }
