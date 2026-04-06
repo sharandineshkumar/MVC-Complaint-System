@@ -190,3 +190,138 @@ h1, h2, h3, h4, h5, h6,
         box-shadow: 0 0 0 2px rgba(0,53,128,0.12);
     }
 
+/* ── Notification Bell ── */
+.bell-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    position: relative;
+    cursor: pointer;
+    padding: 0 8px;
+    outline: none;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+    .bell-btn:focus,
+    .bell-btn:active {
+        background: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+.bell-badge {
+    position: absolute;
+    top: -4px;
+    right: 0px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-dropdown {
+    display: none !important;
+    position: absolute;
+    right: 0;
+    top: 40px;
+    width: 340px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 9999;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+    .notification-dropdown.show {
+        display: block !important;
+    }
+
+.notif-header {
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #003580;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+}
+
+    .notif-item.unread {
+        background: #eef4ff;
+    }
+
+    .notif-item.read {
+        background: white;
+        color: #6b7280;
+    }
+
+.notif-time {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.notif-empty {
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+}
+/* ── Notification item layout (message + X button side by side) ── */
+.notif-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.notif-body {
+    flex: 1;
+    padding-right: 8px;
+}
+
+.notif-delete-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+    .notif-delete-btn:hover {
+        color: #c8102e;
+    }
+
+/* ── Toast popup (bottom-right corner) ── */
+.notif-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #003580;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 99999;
+    max-width: 320px;
+}

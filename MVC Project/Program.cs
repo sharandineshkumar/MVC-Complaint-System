@@ -16,7 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
-builder.Services.AddScoped<INotificationService, NotificationService>();  // ADD THIS
+builder.Services.AddScoped<INotificationService, NotificationService>();  
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

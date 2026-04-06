@@ -12,7 +12,7 @@ namespace MVC_Project.Services
             _db = db;
         }
 
-        public bool EmailExists(string email)
+        public bool EmailExists(string email)  //REGISTER PART 
         {
             return _db.Users.Any(u => u.Email == email);
         }
@@ -27,7 +27,7 @@ namespace MVC_Project.Services
             _db.SaveChanges();
         }
 
-        public User? GetUserByEmailAndPassword(string email, string password)
+        public User? GetUserByEmailAndPassword(string email, string password)   
         {
             return _db.Users.FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
         }

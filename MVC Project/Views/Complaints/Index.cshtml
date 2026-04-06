@@ -102,12 +102,15 @@ else
                                 }
                                 else
                                 {
-                                    <a asp-controller="Complaints"
-                                           asp-action="CitizenEdit"
-                                           asp-route-id="@complaint.Id"
-                                           class="btn btn-sm btn-warning ms-1">
-                                        Edit
-                                    </a>
+                                    @if (complaint.Status == "Pending")
+                                    {
+                                        <a asp-controller="Complaints"
+                                               asp-action="CitizenEdit"
+                                               asp-route-id="@complaint.Id"
+                                               class="btn btn-sm btn-warning ms-1">
+                                            Edit
+                                        </a>
+                                    }
                                 }
                             </td>
                         </tr>

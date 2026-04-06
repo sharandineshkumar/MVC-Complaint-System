@@ -126,6 +126,9 @@ namespace MVC_Project.Controllers
             if (complaint == null)
                 return Forbid();
 
+            if (complaint.Status != "Pending")
+                return RedirectToAction("Index");
+
             return View(complaint);
         }
 
@@ -133,6 +136,13 @@ namespace MVC_Project.Controllers
         [HttpPost]
         public IActionResult CitizenEdit(int id, Complaint complaint)
         {
+            var existing = _complaintService.GetComplaintById(id);
+            if (existing == null)
+                return Forbid();
+
+            if (existing.Status != "Pending")
+                return RedirectToAction("Index");
+
             ModelState.Remove("Status");
             ModelState.Remove("SubmittedBy");
 
