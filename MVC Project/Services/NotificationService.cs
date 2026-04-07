@@ -28,7 +28,7 @@ namespace MVC_Project.Services
         public List<Notification> GetAllNotifications()
         {
             return _db.Notifications
-                .OrderByDescending(n => n.CreatedOn)
+                .OrderByDescending(n => n.CreatedOn)// sort them so the newest ones come first
                 .ToList();
         }
 
@@ -51,9 +51,9 @@ namespace MVC_Project.Services
 
         public void DeleteNotification(int id)
         {
-            var notif = _db.Notifications.FirstOrDefault(n => n.Id == id);
-            if (notif == null) return;
-            _db.Notifications.Remove(notif);
+            var check = _db.Notifications.FirstOrDefault(n => n.Id == id);
+            if (check == null) return;
+            _db.Notifications.Remove(check);
             _db.SaveChanges();
         }
     }

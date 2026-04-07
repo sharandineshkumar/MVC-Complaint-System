@@ -12,14 +12,18 @@ namespace MVC_Project.Controllers
         private readonly IComplaintService _complaintService;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly INotificationService _notificationService;
+        private readonly IEmailService _emailService;
 
-        public ComplaintsController(IComplaintService complaintService,
-                                    IHubContext<NotificationHub> hubContext,
-                                    INotificationService notificationService)
+        public ComplaintsController(
+            IComplaintService complaintService,
+            IHubContext<NotificationHub> hubContext,
+            INotificationService notificationService,
+            IEmailService emailService)
         {
             _complaintService = complaintService;
             _hubContext = hubContext;
             _notificationService = notificationService;
+            _emailService = emailService;
         }
 
         [Authorize]
@@ -52,16 +56,43 @@ namespace MVC_Project.Controllers
             if (!ModelState.IsValid)
                 return View(complaint);
 
+            // Save complaint
             _complaintService.AddComplaint(complaint, User.Identity.Name);
 
-            // Save notification to database
-            string message = $"New complaint submitted by {User.Identity.Name}: {complaint.Title}";
+            // Save notification
+            string message = $"New complaint submitted by {complaint.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
 
-            // Also push real-time via SignalR
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+            // SignalR notification
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message, new
+            {
+                id = complaint.Id,
+                title = complaint.Title,
+                category = complaint.Category,
+                submittedBy = complaint.SubmittedBy,
+                datetime = complaint.datetime.ToString("dd MMM yyyy"),
+                status = complaint.Status
+            });
 
-            return RedirectToAction("RedirectToPortal", new { category = complaint.Category, id = complaint.Id });
+            // EMAIL (UPDATED ONLY HERE)
+            string adminEmail = "civicadmin3@gmail.com"; // change to real email
+
+            string subject = "New Complaint Submitted";
+
+            string body = $"A new complaint has been submitted:\n\n" +
+                          $"Title: {complaint.Title}\n" +
+                          $"Category: {complaint.Category}\n" +
+                          $"Description: {complaint.Description}\n" +   // ✅ added
+                          $"Submitted By: {complaint.SubmittedBy}\n" +  // ✅ fixed
+                          $"Date: {complaint.datetime}";               // ✅ fixed
+
+            await _emailService.SendEmailAsync(adminEmail, subject, body);
+
+            return RedirectToAction("RedirectToPortal", new
+            {
+                category = complaint.Category,
+                id = complaint.Id
+            });
         }
 
         [Authorize]
@@ -111,7 +142,6 @@ namespace MVC_Project.Controllers
             ModelState.Remove("Description");
             ModelState.Remove("Category");
             ModelState.Remove("SubmittedBy");
-
 
             _complaintService.UpdateStatus(id, complaint.Status, complaint.AdminNote);
 

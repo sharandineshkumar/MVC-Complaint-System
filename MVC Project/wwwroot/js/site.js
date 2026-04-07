@@ -11,6 +11,14 @@ if (bellBtn) {
     connection.on("ReceiveNotification", function (message) {
         loadUnreadCount();
         showToast(message);
+
+        // If admin is on the complaints list page, reload after toast finishes
+        var complaintsTable = document.querySelector('table.table');
+        if (complaintsTable) {
+            setTimeout(function () {
+                location.reload();
+            }, 8000);
+        }
     });
 
     connection.start().catch(function (err) {
@@ -118,5 +126,5 @@ if (bellBtn) {
             dropdown.classList.remove('show');
         }
     });
-
-}
+    V
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

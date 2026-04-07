@@ -14,21 +14,21 @@ namespace MVC_Project.Controllers
             _notificationService = notificationService;
         }
 
-        // Returns unread count as JSON — called by navbar bell icon
+        
         public IActionResult GetUnreadCount()
         {
             int count = _notificationService.GetUnreadCount();
             return Json(count);
         }
 
-        // Returns all notifications as JSON — called when bell dropdown opens
+       
         public IActionResult GetAll()
         {
             var notifications = _notificationService.GetAllNotifications();
             return Json(notifications);
         }
 
-        // Marks all notifications as read
+        
         [HttpPost]
         public IActionResult MarkAllRead()
         {
@@ -36,7 +36,7 @@ namespace MVC_Project.Controllers
             return Json(new { success = true });
         }
 
-        // Deletes a single notification — called by the X button
+        
         [HttpPost]
         public IActionResult Delete(int id)
         {

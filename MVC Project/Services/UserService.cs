@@ -27,7 +27,7 @@ namespace MVC_Project.Services
             _db.SaveChanges();
         }
 
-        public User? GetUserByEmailAndPassword(string email, string password)   
+        public User? GetUserByEmailAndPassword(string email, string password)   //LOGIN PART
         {
             return _db.Users.FirstOrDefault(u => u.Email == email && u.PasswordHash == password);
         }
