@@ -45,6 +45,13 @@ namespace MVC_Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Complaint complaint)
         {
+            ModelState.Remove("Status");
+            ModelState.Remove("SubmittedBy");
+            ModelState.Remove("datetime");
+
+            if (!ModelState.IsValid)
+                return View(complaint);
+
             _complaintService.AddComplaint(complaint, User.Identity.Name);
 
             // Save notification to database
