@@ -19,7 +19,7 @@ namespace MVC_Project.Services
                 From = new MailAddress("civicadmin3@gmail.com"),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = false,
+                IsBodyHtml = true,
             };
 
             mailMessage.To.Add(toEmail);
