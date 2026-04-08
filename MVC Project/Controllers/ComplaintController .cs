@@ -84,7 +84,8 @@ namespace MVC_Project.Controllers
                           $"Category: {complaint.Category}\n" +
                           $"Description: {complaint.Description}\n" +   // ✅ added
                           $"Submitted By: {complaint.SubmittedBy}\n" +  // ✅ fixed
-                          $"Date: {complaint.datetime}";               // ✅ fixed
+                          $"Date: {complaint.datetime}\n"+               // ✅ fixed
+            $"View Complaint: {Request.Scheme}://{Request.Host}/Complaints/Details/{complaint.Id}";
 
             await _emailService.SendEmailAsync(adminEmail, subject, body);
 
