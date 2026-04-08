@@ -79,13 +79,36 @@ namespace MVC_Project.Controllers
 
             string subject = "New Complaint Submitted";
 
-            string body = $"A new complaint has been submitted:\n\n" +
-                          $"Title: {complaint.Title}\n" +
-                          $"Category: {complaint.Category}\n" +
-                          $"Description: {complaint.Description}\n" +   // ✅ added
-                          $"Submitted By: {complaint.SubmittedBy}\n" +  // ✅ fixed
-                          $"Date: {complaint.datetime}\n"+               // ✅ fixed
-            $"View Complaint: {Request.Scheme}://{Request.Host}/Complaints/Details/{complaint.Id}";
+            //string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
+
+            //string body =
+            //    "A new complaint has been submitted:\n\n" +
+
+            //    $"Title: {complaint.Title}\n" +
+            //    $"Category: {complaint.Category}\n" +
+            //    $"Description: {complaint.Description}\n" +
+            //    $"Submitted By: {complaint.SubmittedBy}\n" +
+            //    $"Date: {complaint.datetime}\n\n" +
+
+            //    $"View Complaint: {complaintLink}";
+
+            string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
+
+            string body = $@"
+                                <h3>New Complaint Submitted</h3>
+
+                                <p><b>Title:</b> {complaint.Title}</p>
+                                <p><b>Category:</b> {complaint.Category}</p>
+                                <p><b>Description:</b> {complaint.Description}</p>
+                                <p><b>Submitted By:</b> {complaint.SubmittedBy}</p>
+                                <p><b>Date:</b> {complaint.datetime}</p>
+
+                            <p>
+                               <b>View Complaint:</b> 
+                               <a href='{complaintLink}'>Click Here</a>
+                            </p>";
+
+
 
             await _emailService.SendEmailAsync(adminEmail, subject, body);
 
