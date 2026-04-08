@@ -95,7 +95,7 @@ namespace MVC_Project.Controllers
             string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
 
             string body = $@"
-                                <h3>New Complaint Submitted</h3>
+                                
 
                                 <p><b>Title:</b> {complaint.Title}</p>
                                 <p><b>Category:</b> {complaint.Category}</p>

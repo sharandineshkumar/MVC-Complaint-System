@@ -3,9 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
     <title>@ViewData["Title"] - Citizen Complaint Portal</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -17,7 +23,11 @@
     <div class="gov-header">
         <div class="container">
             <div class="d-flex align-items-center">
-                <div class="gov-emblem">CS</div>
+
+                @* <div class="gov-emblem">CS</div> *@
+                 <img src="~/images/emblem.png" class="gov-logo" />
+
+
                 <div>
                     <div class="portal-title">Citizen Complaint Management Portal</div>
                     <div class="portal-subtitle">Ministry of Public Grievances &amp; Administration</div>
