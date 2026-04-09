@@ -1,28 +1,73 @@
-﻿var bellBtn = document.getElementById('bellBtn');
+﻿// ─── SignalR connection (shared for both Admin bell and live table updates) ───
+
+var connection = new signalR.HubConnectionBuilder()
+    .withUrl("/notificationHub")
+    .build();
+
+connection.start().catch(function (err) {
+    console.error("SignalR error: " + err.toString());
+});
+
+
+// ─── LIVE TABLE UPDATES (works for both Admin and Citizen on Index page) ───
+
+// Helper: returns the badge HTML for a given status string
+function getStatusBadge(status) {
+    if (status === "Pending") return '<span class="badge bg-warning text-dark">Pending</span>';
+    if (status === "InProgress") return '<span class="badge bg-primary">In Progress</span>';
+    if (status === "Resolved") return '<span class="badge bg-success">Resolved</span>';
+    if (status === "Rejected") return '<span class="badge bg-danger">Rejected</span>';
+    return '<span class="badge bg-secondary">' + status + '</span>';
+}
+
+// Admin updated a complaint status → update the row live for the citizen
+connection.on("ComplaintStatusUpdated", function (id, newStatus, adminNote) {
+    var statusCell = document.getElementById("status-" + id);
+    if (statusCell) {
+        statusCell.innerHTML = getStatusBadge(newStatus);
+    }
+
+    // If status is no longer Pending, hide the citizen Edit button
+    var editBtn = document.getElementById("editbtn-" + id);
+    if (editBtn && newStatus !== "Pending") {
+        editBtn.style.display = "none";
+    }
+});
+
+// Admin deleted a complaint → remove the row live for the citizen
+connection.on("ComplaintDeleted", function (id) {
+    var row = document.getElementById("row-" + id);
+    if (row) {
+        row.remove();
+    }
+});
+
+// Citizen edited a complaint → update title and category live for the admin
+connection.on("ComplaintEdited", function (id, newTitle, newCategory) {
+    var titleCell = document.getElementById("title-" + id);
+    if (titleCell) {
+        titleCell.innerText = newTitle;
+    }
+
+    var categoryCell = document.getElementById("category-" + id);
+    if (categoryCell) {
+        categoryCell.innerText = newCategory;
+    }
+});
+
+
+// ─── ADMIN BELL NOTIFICATIONS ───
+
+var bellBtn = document.getElementById('bellBtn');
 
 if (bellBtn) {
 
     loadUnreadCount();
 
-    var connection = new signalR.HubConnectionBuilder()
-        .withUrl("/notificationHub")
-        .build();
-
+    // New complaint submitted → update bell count and show toast
     connection.on("ReceiveNotification", function (message) {
         loadUnreadCount();
         showToast(message);
-
-        // If admin is on the complaints list page, reload after toast finishes
-        var complaintsTable = document.querySelector('table.table');
-        if (complaintsTable) {
-            setTimeout(function () {
-                location.reload();
-            }, 8000);
-        }
-    });
-
-    connection.start().catch(function (err) {
-        console.error("SignalR error: " + err.toString());
     });
 
     function loadUnreadCount() {
@@ -100,7 +145,6 @@ if (bellBtn) {
     }
 
     function showToast(message) {
-        // Remove any existing toast first
         var existing = document.getElementById('liveToast');
         if (existing) existing.remove();
 
@@ -126,5 +170,5 @@ if (bellBtn) {
             dropdown.classList.remove('show');
         }
     });
-    V
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+}

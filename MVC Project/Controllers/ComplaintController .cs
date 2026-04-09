@@ -56,14 +56,11 @@ namespace MVC_Project.Controllers
             if (!ModelState.IsValid)
                 return View(complaint);
 
-            // Save complaint
             _complaintService.AddComplaint(complaint, User.Identity.Name);
 
-            // Save notification
             string message = $"New complaint submitted by {complaint.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
 
-            // SignalR notification
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message, new
             {
                 id = complaint.Id,
@@ -74,41 +71,20 @@ namespace MVC_Project.Controllers
                 status = complaint.Status
             });
 
-            // EMAIL (UPDATED ONLY HERE)
-            string adminEmail = "civicadmin3@gmail.com"; // change to real email
-
+            string adminEmail = "civicadmin3@gmail.com";
             string subject = "New Complaint Submitted";
-
-            //string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
-
-            //string body =
-            //    "A new complaint has been submitted:\n\n" +
-
-            //    $"Title: {complaint.Title}\n" +
-            //    $"Category: {complaint.Category}\n" +
-            //    $"Description: {complaint.Description}\n" +
-            //    $"Submitted By: {complaint.SubmittedBy}\n" +
-            //    $"Date: {complaint.datetime}\n\n" +
-
-            //    $"View Complaint: {complaintLink}";
-
             string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
 
             string body = $@"
-                                
-
                                 <p><b>Title:</b> {complaint.Title}</p>
                                 <p><b>Category:</b> {complaint.Category}</p>
                                 <p><b>Description:</b> {complaint.Description}</p>
                                 <p><b>Submitted By:</b> {complaint.SubmittedBy}</p>
                                 <p><b>Date:</b> {complaint.datetime}</p>
-
                             <p>
                                <b>View Complaint:</b> 
                                <a href='{complaintLink}'>Click Here</a>
                             </p>";
-
-
 
             await _emailService.SendEmailAsync(adminEmail, subject, body);
 
@@ -160,7 +136,7 @@ namespace MVC_Project.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Edit(int id, Complaint complaint)
+        public async Task<IActionResult> Edit(int id, Complaint complaint)
         {
             ModelState.Remove("Title");
             ModelState.Remove("Description");
@@ -169,14 +145,19 @@ namespace MVC_Project.Controllers
 
             _complaintService.UpdateStatus(id, complaint.Status, complaint.AdminNote);
 
+            await _hubContext.Clients.All.SendAsync("ComplaintStatusUpdated", id, complaint.Status, complaint.AdminNote);
+
             return RedirectToAction("Index");
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             _complaintService.DeleteComplaint(id);
+
+            await _hubContext.Clients.All.SendAsync("ComplaintDeleted", id);
+
             return RedirectToAction("Index");
         }
 
@@ -195,7 +176,7 @@ namespace MVC_Project.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult CitizenEdit(int id, Complaint complaint)
+        public async Task<IActionResult> CitizenEdit(int id, Complaint complaint)
         {
             var existing = _complaintService.GetComplaintById(id);
             if (existing == null)
@@ -211,6 +192,16 @@ namespace MVC_Project.Controllers
                 return View(complaint);
 
             _complaintService.UpdateComplaintDetails(id, complaint.Title, complaint.Description, complaint.Category);
+
+            // Save notification to DB so admin sees it in the bell dropdown
+            string message = $"Complaint #{id} was updated by {existing.SubmittedBy}: {complaint.Title}";
+            _notificationService.AddNotification(message);
+
+            // Push to admin bell live (same event as new complaint — reuses existing bell logic)
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+
+            // Update the admin's table row live without refresh
+            await _hubContext.Clients.All.SendAsync("ComplaintEdited", id, complaint.Title, complaint.Category);
 
             return RedirectToAction("Index");
         }

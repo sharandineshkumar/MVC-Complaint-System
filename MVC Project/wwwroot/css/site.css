@@ -22,7 +22,7 @@ body {
     font-weight: 500;
 }
 
-/* ✅ HEADINGS */
+
 h1, h2, h3, h4, h5, h6,
 .card-header,
 .portal-title,
@@ -142,7 +142,7 @@ h1, h2, h3, h4, h5, h6,
 
 /* ✅ FIXED DROPDOWN */
 .notification-dropdown {
-    display: none; /* ❌ removed !important */
+    display: none; 
     position: absolute;
     right: 0;
     top: 45px;

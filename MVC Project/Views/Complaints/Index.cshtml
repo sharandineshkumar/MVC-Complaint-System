@@ -13,7 +13,7 @@
     @if (!User.IsInRole("Admin"))
     {
         <a asp-controller="Complaints" asp-action="Create" class="btn btn-primary btn-sm px-4">
-             Submit New Complaint
+            Submit New Complaint
         </a>
     }
 </div>
@@ -40,16 +40,16 @@ else
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="complaintsTableBody">
                     @foreach (var complaint in Model)
                     {
-                        <tr>
-                            <td style="font-size:13px; ">@complaint.Id</td>
-                            <td style="font-size:14px;">@complaint.Title</td>
-                            <td style="font-size:13px;">@complaint.Category</td>
+                        <tr id="row-@complaint.Id">
+                            <td style="font-size:13px;">@complaint.Id</td>
+                            <td style="font-size:14px;" id="title-@complaint.Id">@complaint.Title</td>
+                            <td style="font-size:13px;" id="category-@complaint.Id">@complaint.Category</td>
                             <td style="font-size:13px;">@complaint.SubmittedBy</td>
                             <td style="font-size:13px;">@complaint.datetime.ToString("dd MMM yyyy")</td>
-                            <td>
+                            <td id="status-@complaint.Id">
                                 @if (complaint.Status == "Pending")
                                 {
                                     <span class="badge bg-warning text-dark">Pending</span>
@@ -71,19 +71,19 @@ else
                                     <span class="badge bg-secondary">@complaint.Status</span>
                                 }
                             </td>
-                            <td>
+                            <td id="actions-@complaint.Id">
                                 <a asp-controller="Complaints"
                                        asp-action="Details"
                                        asp-route-id="@complaint.Id"
                                        class="btn btn-sm btn-outline-primary">
-                                    Detials@*this button is for user*@
+                                    Details
                                 </a>
 
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <a asp-controller="Complaints"
                                            asp-action="Edit"
-                                           asp-route-id="@complaint.Id" 
+                                           asp-route-id="@complaint.Id"
                                            class="btn btn-sm btn-warning ms-1">
                                         Edit
                                     </a>
@@ -107,7 +107,8 @@ else
                                         <a asp-controller="Complaints"
                                                asp-action="CitizenEdit"
                                                asp-route-id="@complaint.Id"
-                                               class="btn btn-sm btn-warning ms-1">
+                                               class="btn btn-sm btn-warning ms-1"
+                                               id="editbtn-@complaint.Id">
                                             Edit
                                         </a>
                                     }

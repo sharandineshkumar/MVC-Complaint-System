@@ -24,7 +24,7 @@
         <div class="container">
             <div class="d-flex align-items-center">
 
-                @* <div class="gov-emblem">CS</div> *@
+                
                  <img src="~/images/emblem.png" class="gov-logo" />
 
 
@@ -56,6 +56,8 @@
                         <span class="user-info">Logged in as: @User.Identity.Name</span>
                     </li>
 
+                    
+
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item" style="position:relative;">
@@ -79,9 +81,12 @@
                         </li>
                     }
 
+
+                    
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
                     </li>
+                    
                 }
                 else
                 {
