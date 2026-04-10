@@ -2,9 +2,8 @@
 
 namespace MVC_Project.Hubs
 {
-    public class NotificationHub : Hub
+    public class NotificationHub : Hub    //it inherits from SignalR's built-in Hub class. This inheritance gives it all the connection-management powers automatically.
     {
-        // This hub is used to push notifications to admin users.
-        // No methods needed here — the server calls the client, not the other way around.
+        
     }
 }

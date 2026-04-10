@@ -1,6 +1,4 @@
-﻿// ─── SignalR connection (shared for both Admin bell and live table updates) ───
-
-var connection = new signalR.HubConnectionBuilder()
+﻿var connection = new signalR.HubConnectionBuilder()
     .withUrl("/notificationHub")
     .build();
 
@@ -8,10 +6,7 @@ connection.start().catch(function (err) {
     console.error("SignalR error: " + err.toString());
 });
 
-
-// ─── LIVE TABLE UPDATES (works for both Admin and Citizen on Index page) ───
-
-// Helper: returns the badge HTML for a given status string
+// Live table updates
 function getStatusBadge(status) {
     if (status === "Pending") return '<span class="badge bg-warning text-dark">Pending</span>';
     if (status === "InProgress") return '<span class="badge bg-primary">In Progress</span>';
@@ -20,51 +15,58 @@ function getStatusBadge(status) {
     return '<span class="badge bg-secondary">' + status + '</span>';
 }
 
-// Admin updated a complaint status → update the row live for the citizen
 connection.on("ComplaintStatusUpdated", function (id, newStatus, adminNote) {
     var statusCell = document.getElementById("status-" + id);
-    if (statusCell) {
-        statusCell.innerHTML = getStatusBadge(newStatus);
-    }
+    if (statusCell) statusCell.innerHTML = getStatusBadge(newStatus);
 
-    // If status is no longer Pending, hide the citizen Edit button
     var editBtn = document.getElementById("editbtn-" + id);
-    if (editBtn && newStatus !== "Pending") {
-        editBtn.style.display = "none";
-    }
+    if (editBtn && newStatus !== "Pending") editBtn.style.display = "none";
 });
 
-// Admin deleted a complaint → remove the row live for the citizen
 connection.on("ComplaintDeleted", function (id) {
     var row = document.getElementById("row-" + id);
-    if (row) {
-        row.remove();
-    }
+    if (row) row.remove();
 });
 
-// Citizen edited a complaint → update title and category live for the admin
 connection.on("ComplaintEdited", function (id, newTitle, newCategory) {
     var titleCell = document.getElementById("title-" + id);
-    if (titleCell) {
-        titleCell.innerText = newTitle;
-    }
+    if (titleCell) titleCell.innerText = newTitle;
 
     var categoryCell = document.getElementById("category-" + id);
-    if (categoryCell) {
-        categoryCell.innerText = newCategory;
-    }
+    if (categoryCell) categoryCell.innerText = newCategory;
 });
 
+connection.on("NewComplaintRow", function (c) {
+    var tbody = document.getElementById("complaintsTableBody");
+    if (!tbody) return;
 
-// ─── ADMIN BELL NOTIFICATIONS ───
+    var row = document.createElement("tr");
+    row.id = "row-" + c.id;
+    row.innerHTML =
+        '<td>' + c.id + '</td>' +
+        '<td id="title-' + c.id + '">' + c.title + '</td>' +
+        '<td id="category-' + c.id + '">' + c.category + '</td>' +
+        '<td>' + c.submittedBy + '</td>' +
+        '<td>' + c.datetime + '</td>' +
+        '<td id="status-' + c.id + '"><span class="badge bg-warning text-dark">Pending</span></td>' +
+        '<td>' +
+        '<a href="/Complaints/Details/' + c.id + '" class="btn btn-sm btn-outline-primary">Details</a>' +
+        ' <a href="/Complaints/Edit/' + c.id + '" class="btn btn-sm btn-warning ms-1">Edit</a>' +
+        ' <form action="/Complaints/Delete/' + c.id + '" method="post" style="display:inline">' +
+        '<button type="submit" class="btn btn-sm btn-danger ms-1" onclick="return confirm(\'Delete?\')">Delete</button>' +
+        '</form>' +
+        '</td>';
 
+    tbody.appendChild(row);
+});
+
+// Bell notifications (Admin only)
 var bellBtn = document.getElementById('bellBtn');
 
 if (bellBtn) {
 
     loadUnreadCount();
 
-    // New complaint submitted → update bell count and show toast
     connection.on("ReceiveNotification", function (message) {
         loadUnreadCount();
         showToast(message);
@@ -152,7 +154,7 @@ if (bellBtn) {
         toast.id = 'liveToast';
         toast.className = 'notif-toast';
         toast.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">'
-            + '<div><strong>🔔 New Complaint</strong><div style="margin-top:6px;font-size:12px;">' + message + '</div></div>'
+            + '<div><strong>🔔 New Complaint</strong><div style="margin-top:20px;font-size:25px;">' + message + '</div></div>'
             + '<button onclick="document.getElementById(\'liveToast\').remove()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;line-height:1;padding:0;">✕</button>'
             + '</div>';
         document.body.appendChild(toast);

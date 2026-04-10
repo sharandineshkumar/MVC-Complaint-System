@@ -39,7 +39,7 @@ namespace MVC_Project.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Admin")) 
                 return RedirectToAction("Index");
 
             return View();
@@ -61,7 +61,10 @@ namespace MVC_Project.Controllers
             string message = $"New complaint submitted by {complaint.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
 
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message, new
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+
+            await _hubContext.Clients.All.SendAsync("NewComplaintRow", new   
+
             {
                 id = complaint.Id,
                 title = complaint.Title,
@@ -145,7 +148,7 @@ namespace MVC_Project.Controllers
 
             _complaintService.UpdateStatus(id, complaint.Status, complaint.AdminNote);
 
-            await _hubContext.Clients.All.SendAsync("ComplaintStatusUpdated", id, complaint.Status, complaint.AdminNote);
+            await _hubContext.Clients.All.SendAsync("ComplaintStatusUpdated", id, complaint.Status, complaint.AdminNote);//update the citizen's table row live without refresh
 
             return RedirectToAction("Index");
         }
@@ -156,7 +159,7 @@ namespace MVC_Project.Controllers
         {
             _complaintService.DeleteComplaint(id);
 
-            await _hubContext.Clients.All.SendAsync("ComplaintDeleted", id);
+            await _hubContext.Clients.All.SendAsync("ComplaintDeleted", id);//update the citizen's table live without refresh
 
             return RedirectToAction("Index");
         }

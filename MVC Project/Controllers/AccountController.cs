@@ -49,24 +49,24 @@ namespace MVC_Project.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // Step 1: Check if the email even exists in the database
+            
             if (!_userService.EmailExists(email))
             {
-                ModelState.AddModelError("email", "No account found with this email address.");
+                ModelState.AddModelError("email", "No account found with this email address");
                 return View();
             }
 
-            // Step 2: Email exists — now check if password is correct
+           
             var user = _userService.GetUserByEmailAndPassword(email, password);
 
             if (user == null)
             {
-                // Email was fine, so the password must be wrong
+                
                 ModelState.AddModelError("password", "Incorrect password. Please try again.");
                 return View();
             }
 
-            // Step 3: Both correct — sign in the user
+           
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, user.FullName),
