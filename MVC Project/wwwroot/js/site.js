@@ -60,7 +60,7 @@ connection.on("NewComplaintRow", function (c) {
     tbody.appendChild(row);
 });
 
-// Bell notifications (Admin only)
+// ─── Bell notifications (Admin only) ───────────────────────────────────────
 var bellBtn = document.getElementById('bellBtn');
 
 if (bellBtn) {
@@ -108,14 +108,14 @@ if (bellBtn) {
                 var html = '';
                 data.forEach(function (n) {
                     var cssClass = n.isRead ? 'read' : 'unread';
-                    var dot = n.isRead ? '' : '<span style="color:#003580;font-weight:bold;">● </span>';
                     var time = new Date(n.createdOn).toLocaleString();
+
                     html += '<div class="notif-item ' + cssClass + '" id="notif-' + n.id + '">'
                         + '<div class="notif-body">'
-                        + dot + n.message
+                        + n.message
                         + '<div class="notif-time">' + time + '</div>'
                         + '</div>'
-                        + '<button onclick="deleteNotification(' + n.id + ')" class="notif-delete-btn">✕</button>'
+                        + '<button onclick="deleteNotification(' + n.id + ')" class="notif-delete-btn">&#10005;</button>'
                         + '</div>';
                 });
 
@@ -153,10 +153,16 @@ if (bellBtn) {
         var toast = document.createElement('div');
         toast.id = 'liveToast';
         toast.className = 'notif-toast';
-        toast.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">'
-            + '<div><strong>🔔 New Complaint</strong><div style="margin-top:20px;font-size:25px;">' + message + '</div></div>'
-            + '<button onclick="document.getElementById(\'liveToast\').remove()" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;line-height:1;padding:0;">✕</button>'
+        toast.innerHTML =
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">'
+            + '<div>'
+            + '<strong>🔔 New Complaint</strong>'
+            + '<div style="margin-top:20px;font-size:20px;">' + message + '</div>'
+            + '</div>'
+            + '<button onclick="document.getElementById(\'liveToast\').remove()" '
+            + 'style="background:none;border:none;color:white;font-size:36px;cursor:pointer;line-height:1;padding:0;">&#10005;</button>'
             + '</div>';
+
         document.body.appendChild(toast);
 
         setTimeout(function () {

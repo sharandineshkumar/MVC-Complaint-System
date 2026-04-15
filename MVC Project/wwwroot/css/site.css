@@ -1,233 +1,799 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap');
+
+/* ═══════════════════════════════════════════
+   CSS VARIABLES
+═══════════════════════════════════════════ */
 :root {
     --gov-blue: #003580;
     --gov-blue-light: #1a4f99;
+    --gov-blue-dark: #002060;
     --gov-accent: #c8102e;
-    --gov-gray: #f4f6f8;
-    --gov-border: #d0d7de;
-    --gov-text: #1a1a2e;
-    --gov-muted: #6b7280;
+    --gov-gray: #f1f5f9;
+    --gov-border: #e2e8f0;
+    --gov-text: #1e293b;
+    --gov-muted: #64748b;
+    --gov-white: #ffffff;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0, 53, 128, 0.10);
+    --shadow-md: 0 8px 32px rgba(0, 53, 128, 0.14);
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ✅ GLOBAL FONT */
-* {
+/* ═══════════════════════════════════════════
+   GLOBAL
+═══════════════════════════════════════════ */
+*, *::before, *::after {
     box-sizing: border-box;
-    font-family: 'IBM Plex Sans', sans-serif !important;
+    font-family: 'Sora', sans-serif !important;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    background-color: #f0f2f5;
+    background-color: var(--gov-gray);
     color: var(--gov-text);
     font-size: 15px;
+    font-weight: 400;
     margin: 0;
-    font-weight: 500;
+    min-height: 100vh;
 }
 
-
-h1, h2, h3, h4, h5, h6,
-.card-header,
-.portal-title,
-.gov-navbar .nav-link {
+h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
+    color: var(--gov-text);
+    letter-spacing: -0.02em;
 }
 
-/* ───────── HEADER ───────── */
-
+/* ═══════════════════════════════════════════
+   TOP STRIP
+═══════════════════════════════════════════ */
 .top-strip {
-    background-color: var(--gov-blue);
-    color: white;
-    font-size: 12px;
-    padding: 4px 0;
+    background: var(--gov-blue-dark);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 5px 0;
     text-align: center;
+    letter-spacing: 0.06em;
 }
 
+/* ═══════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════ */
 .gov-header {
-    background-color: white;
+    background: var(--gov-white);
     border-bottom: 3px solid var(--gov-accent);
     padding: 14px 0;
+    box-shadow: 0 2px 12px rgba(0, 53, 128, 0.08);
 }
 
 .portal-title {
     font-size: 20px;
+    font-weight: 700;
     color: var(--gov-blue);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
+.portal-subtitle {
+    font-size: 12px;
+    color: var(--gov-muted);
+    font-weight: 400;
+    margin-top: 2px;
+}
+
+.gov-logo {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    margin-right: 14px;
+}
+
+/* ═══════════════════════════════════════════
+   NAVBAR
+═══════════════════════════════════════════ */
 .gov-navbar {
-    background-color: var(--gov-blue);
+    background: linear-gradient(90deg, var(--gov-blue), var(--gov-blue-light));
+    box-shadow: 0 2px 10px rgba(0, 53, 128, 0.25);
 }
 
     .gov-navbar .nav-link {
-        color: rgba(255,255,255,0.85) !important;
-        padding: 12px 18px !important;
+        color: rgba(255, 255, 255, 0.80) !important;
+        padding: 13px 20px !important;
+        font-size: 13.5px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        transition: var(--transition);
+        position: relative;
     }
 
-        .gov-navbar .nav-link:hover {
-            background-color: var(--gov-blue-light);
-            color: white !important;
+        .gov-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 2px;
+            background: white;
+            border-radius: 2px 2px 0 0;
+            opacity: 0;
+            transition: var(--transition);
         }
 
-    /* Fix logged-in text color */
+        .gov-navbar .nav-link:hover {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.10);
+        }
+
+            .gov-navbar .nav-link:hover::after {
+                opacity: 1;
+            }
+
     .gov-navbar .user-info {
+        color: rgba(255, 255, 255, 0.65) !important;
+        font-size: 13px;
+        font-weight: 400;
+        padding: 13px 16px;
+    }
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════ */
+.main-content {
+    min-height: calc(100vh - 200px);
+    padding: 32px 0;
+    animation: fadeUp 0.35s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ═══════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════ */
+.card {
+    background: var(--gov-white) !important;
+    border: 1px solid var(--gov-border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+    .card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+.card-header {
+    background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light)) !important;
+    color: white !important;
+    padding: 15px 22px !important;
+    border-bottom: none !important;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    border-radius: 0 !important;
+}
+
+.card-body {
+    background: white !important;
+    padding: 20px 22px;
+}
+
+.card-footer {
+    background: #f8fafc !important;
+    border-top: 1px solid var(--gov-border) !important;
+    padding: 16px 22px !important;
+}
+
+/* ═══════════════════════════════════════════
+   LIQUID BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+    font-weight: 600;
+    font-size: 13.5px;
+    letter-spacing: 0.01em;
+    border-radius: 50px !important;
+    padding: 9px 22px !important;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: none !important;
+}
+
+    .btn:active {
+        transform: scale(0.97);
+    }
+
+    .btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.18);
+        opacity: 0;
+        border-radius: 50px;
+        transition: var(--transition);
+    }
+
+    .btn:hover::after {
+        opacity: 1;
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light)) !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(0, 53, 128, 0.35) !important;
+}
+
+    .btn-primary:hover {
+        box-shadow: 0 6px 22px rgba(0, 53, 128, 0.50) !important;
+        transform: translateY(-1px);
         color: white !important;
     }
 
-/* ───────── CONTENT ───────── */
-
-.main-content {
-    min-height: calc(100vh - 200px);
-    padding: 28px 0;
+.btn-warning {
+    background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35) !important;
 }
 
-.gov-footer {
-    background-color: var(--gov-blue);
-    color: rgba(255,255,255,0.75);
-    padding: 16px 0;
-    text-align: center;
+    .btn-warning:hover {
+        box-shadow: 0 6px 22px rgba(217, 119, 6, 0.50) !important;
+        transform: translateY(-1px);
+        color: white !important;
+    }
+
+.btn-danger {
+    background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(185, 28, 28, 0.35) !important;
 }
 
-/* ───────── CARDS ───────── */
+    .btn-danger:hover {
+        box-shadow: 0 6px 22px rgba(185, 28, 28, 0.50) !important;
+        transform: translateY(-1px);
+        color: white !important;
+    }
 
-.card {
-    border: 1px solid var(--gov-border);
-    border-radius: 4px;
+.btn-secondary {
+    background: linear-gradient(135deg, #475569, #64748b) !important;
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(71, 85, 105, 0.25) !important;
 }
 
-.card-header {
-    background-color: var(--gov-blue);
-    color: white;
-    padding: 12px 18px;
+    .btn-secondary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 22px rgba(71, 85, 105, 0.38) !important;
+        color: white !important;
+    }
+
+.btn-outline-primary {
+    background: transparent !important;
+    color: var(--gov-blue) !important;
+    border: 1.5px solid var(--gov-blue) !important;
+    box-shadow: none !important;
 }
 
-/* ───────── BUTTONS ───────── */
+    .btn-outline-primary:hover {
+        background: var(--gov-blue) !important;
+        color: white !important;
+        box-shadow: 0 4px 14px rgba(0, 53, 128, 0.30) !important;
+        transform: translateY(-1px);
+    }
 
-.btn {
-    font-weight: 600;
+.btn-outline-secondary {
+    background: transparent !important;
+    color: var(--gov-muted) !important;
+    border: 1.5px solid #cbd5e1 !important;
+    box-shadow: none !important;
 }
 
-.btn-primary {
-    background-color: var(--gov-blue);
+    .btn-outline-secondary:hover {
+        background: #f1f5f9 !important;
+        color: var(--gov-text) !important;
+        transform: translateY(-1px);
+    }
+
+.btn-outline-light {
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
 }
 
-/* ───────── FORMS ───────── */
+    .btn-outline-light:hover {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+    }
 
+.btn-sm {
+    padding: 6px 16px !important;
+    font-size: 12.5px !important;
+}
+
+.btn-lg {
+    padding: 13px 30px !important;
+    font-size: 15px !important;
+}
+
+/* ═══════════════════════════════════════════
+   FORMS
+═══════════════════════════════════════════ */
 .form-control, .form-select {
-    font-family: 'IBM Plex Sans', sans-serif !important;
+    background: #f8fafc !important;
+    border: 1.5px solid var(--gov-border) !important;
+    border-radius: var(--radius-sm) !important;
+    color: var(--gov-text) !important;
+    font-family: 'Sora', sans-serif !important;
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+    transition: var(--transition);
 }
 
-/* ───────── 🔔 NOTIFICATION FIX ───────── */
+    .form-control::placeholder {
+        color: #94a3b8 !important;
+    }
 
+    .form-control:focus, .form-select:focus {
+        background: white !important;
+        border-color: var(--gov-blue) !important;
+        box-shadow: 0 0 0 3px rgba(0, 53, 128, 0.10) !important;
+        color: var(--gov-text) !important;
+        outline: none !important;
+    }
+
+.form-label {
+    color: #374151 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    margin-bottom: 7px !important;
+}
+
+/* ═══════════════════════════════════════════
+   TABLE
+═══════════════════════════════════════════ */
+.table {
+    color: var(--gov-text) !important;
+    border-color: var(--gov-border) !important;
+    margin-bottom: 0 !important;
+}
+
+.table-bordered > :not(caption) > * > * {
+    border-color: var(--gov-border) !important;
+}
+
+.table thead tr {
+    background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light)) !important;
+}
+
+    .table thead tr th {
+        color: white !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.06em !important;
+        text-transform: uppercase !important;
+        padding: 14px 16px !important;
+        border: none !important;
+    }
+
+.table tbody tr {
+    background: white !important;
+    transition: var(--transition);
+}
+
+    .table tbody tr:hover {
+        background: #f0f6ff !important;
+    }
+
+    .table tbody tr td {
+        padding: 13px 16px !important;
+        vertical-align: middle !important;
+        border-color: var(--gov-border) !important;
+        font-size: 14px !important;
+        color: var(--gov-text) !important;
+    }
+
+    /* Details / Edit page row-header cells (th inside tbody) */
+    .table tbody tr th {
+        background: #f8fafc !important;
+        color: var(--gov-muted) !important;
+        font-size: 12.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.03em !important;
+        padding: 13px 16px !important;
+        vertical-align: middle !important;
+        text-transform: uppercase !important;
+        border-color: var(--gov-border) !important;
+    }
+
+/* ═══════════════════════════════════════════
+   BADGES
+═══════════════════════════════════════════ */
+.badge {
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    padding: 5px 13px !important;
+    border-radius: 50px !important;
+    letter-spacing: 0.03em !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #b45309, #f59e0b) !important;
+    color: white !important;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light)) !important;
+    color: white !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #15803d, #22c55e) !important;
+    color: white !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #b91c1c, #ef4444) !important;
+    color: white !important;
+}
+
+.bg-secondary {
+    background: linear-gradient(135deg, #475569, #64748b) !important;
+    color: white !important;
+}
+
+/* ═══════════════════════════════════════════
+   ALERTS
+═══════════════════════════════════════════ */
+.alert {
+    border-radius: var(--radius-sm) !important;
+    font-size: 13.5px;
+}
+
+.alert-info {
+    background: #eff6ff !important;
+    color: var(--gov-blue) !important;
+    border-color: #bfdbfe !important;
+}
+
+.alert-danger {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    border-color: #fecaca !important;
+}
+
+/* ═══════════════════════════════════════════
+   BELL BUTTON
+═══════════════════════════════════════════ */
 .bell-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.30) !important;
+    color: white !important;
+    font-size: 13.5px;
+    font-weight: 600;
     position: relative;
     cursor: pointer;
+    border-radius: 50px !important;
+    padding: 8px 18px !important;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
 }
 
-/* badge */
+    .bell-btn:hover {
+        background: rgba(255, 255, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.55) !important;
+    }
+
 .bell-badge {
     position: absolute;
-    top: -4px;
-    right: 0px;
-    background: red;
+    top: -6px;
+    right: -6px;
+    background: var(--gov-accent);
     color: white;
     font-size: 10px;
+    font-weight: 700;
     border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid var(--gov-blue-light);
+    animation: pulse-badge 2s infinite;
 }
 
-/* ✅ FIXED DROPDOWN */
-.notification-dropdown {
-    display: none; 
-    position: absolute;
-    right: 0;
-    top: 45px;
-    width: 360px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-    z-index: 9999;
-    max-height: 420px;
-    overflow-y: auto;
-}
-
-    /* show */
-    .notification-dropdown.show {
-        display: block;
+@keyframes pulse-badge {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.5);
     }
 
-/* header */
-.notif-header {
-    padding: 12px 16px;
-    font-weight: 700;
-    border-bottom: 1px solid #eee;
+    50% {
+        box-shadow: 0 0 0 5px rgba(200, 16, 46, 0);
+    }
 }
 
-/* item layout FIX */
+/* ═══════════════════════════════════════════
+   NOTIFICATION DROPDOWN — FIXED (white bg, correct text)
+═══════════════════════════════════════════ */
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 52px;
+    width: 370px;
+    background: #ffffff;
+    border: 1px solid var(--gov-border);
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 53, 128, 0.10);
+    z-index: 9999;
+    max-height: 440px;
+    overflow-y: auto;
+    color: var(--gov-text);
+}
+
+    .notification-dropdown.show {
+        display: block;
+        animation: dropIn 0.2s ease;
+    }
+
+@keyframes dropIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.notification-dropdown::-webkit-scrollbar {
+    width: 4px;
+}
+
+.notification-dropdown::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.notification-dropdown::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+}
+
+/* Dropdown header row */
+.notif-header {
+    padding: 13px 18px;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--gov-text);
+    border-bottom: 1px solid var(--gov-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+    /* Mark all read button */
+    .notif-header button {
+        background: transparent !important;
+        border: 1.5px solid var(--gov-blue) !important;
+        color: var(--gov-blue) !important;
+        border-radius: 50px !important;
+        padding: 4px 12px !important;
+        font-size: 11.5px !important;
+        font-weight: 600 !important;
+        cursor: pointer;
+        transition: var(--transition);
+        box-shadow: none !important;
+    }
+
+        .notif-header button:hover {
+            background: var(--gov-blue) !important;
+            color: white !important;
+        }
+
+/* Each notification row */
 .notif-item {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 12px 16px;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
+    padding: 13px 18px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13.5px;
+    color: var(--gov-text);
+    transition: background 0.2s;
+    border-left: 3px solid transparent;
 }
 
-/* text area */
+    .notif-item:last-child {
+        border-bottom: none;
+    }
+
+    .notif-item:hover {
+        background: #f8fafc;
+    }
+
+    .notif-item.unread {
+        background: #eff6ff;
+        border-left-color: var(--gov-blue);
+    }
+
+    .notif-item.read {
+        color: var(--gov-muted);
+    }
+
+/* Message text area */
 .notif-body {
     flex: 1;
     padding-right: 10px;
     word-wrap: break-word;
+    line-height: 1.55;
 }
 
-/* delete button */
+/* Timestamp */
+.notif-time {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+/* Delete button */
 .notif-delete-btn {
     background: none;
     border: none;
-    color: #9ca3af;
+    color: #94a3b8;
     cursor: pointer;
+    font-size: 13px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: var(--transition);
+    flex-shrink: 0;
+    line-height: 1;
 }
 
     .notif-delete-btn:hover {
-        color: #c8102e;
+        color: var(--gov-accent);
+        background: #fee2e2;
     }
 
-/* unread/read */
-.notif-item.unread {
-    background: #eef4ff;
-}
-
-.notif-item.read {
-    color: #6b7280;
-}
-
-/* empty */
+/* Empty state */
 .notif-empty {
-    padding: 20px;
+    padding: 30px;
     text-align: center;
+    color: var(--gov-muted);
+    font-size: 14px;
 }
 
-/* toast */
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
 .notif-toast {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: #003580;
+    bottom: 28px;
+    right: 28px;
+    background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light));
     color: white;
-    padding: 18px;
-    border-radius: 8px;
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    box-shadow: 0 16px 48px rgba(0, 53, 128, 0.35);
+    min-width: 300px;
+    max-width: 380px;
+    z-index: 99999;
+    animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.92);
+    }
 
-/* ===== GOVT EMBLEM LOGO ===== */
-.gov-logo {
-    width: 42px;
-    height: 42px;
-    object-fit: contain;
-    margin-right: 12px;
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.gov-footer {
+    background: linear-gradient(90deg, var(--gov-blue), var(--gov-blue-light));
+    color: rgba(255, 255, 255, 0.65);
+    padding: 18px 0;
+    text-align: center;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════
+   MISC
+═══════════════════════════════════════════ */
+.text-muted {
+    color: var(--gov-muted) !important;
+}
+
+.text-danger {
+    color: #b91c1c !important;
+}
+
+.text-success {
+    color: #15803d !important;
+}
+
+/* Warning note box on Create page */
+[style*="background:#fff8e1"] {
+    background: #fffbeb !important;
+    border-color: #fcd34d !important;
+    color: #92400e !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .notification-dropdown {
+        width: 310px;
+        right: -60px;
+    }
+
+    .portal-title {
+        font-size: 16px;
+    }
+
+    .gov-navbar .nav-link {
+        padding: 10px 12px !important;
+        font-size: 13px;
+    }
+
+    .btn {
+        padding: 8px 16px !important;
+    }
+
+    .table thead tr th,
+    .table tbody tr td,
+    .table tbody tr th {
+        padding: 10px 12px !important;
+        font-size: 12.5px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .gov-header {
+        padding: 10px 0;
+    }
+
+    .gov-logo {
+        width: 34px;
+        height: 34px;
+    }
+
+    .portal-title {
+        font-size: 14px;
+    }
+
+    .card {
+        border-radius: var(--radius-sm) !important;
+    }
 }

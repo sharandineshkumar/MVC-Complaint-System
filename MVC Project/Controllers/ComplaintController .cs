@@ -148,7 +148,7 @@ namespace MVC_Project.Controllers
 
             _complaintService.UpdateStatus(id, complaint.Status, complaint.AdminNote);
 
-            await _hubContext.Clients.All.SendAsync("ComplaintStatusUpdated", id, complaint.Status, complaint.AdminNote);//update the citizen's table row live without refresh
+            await _hubContext.Clients.All.SendAsync("ComplaintStatusUpdated", id, complaint.Status, complaint.AdminNote);
 
             return RedirectToAction("Index");
         }
@@ -159,7 +159,7 @@ namespace MVC_Project.Controllers
         {
             _complaintService.DeleteComplaint(id);
 
-            await _hubContext.Clients.All.SendAsync("ComplaintDeleted", id);//update the citizen's table live without refresh
+            await _hubContext.Clients.All.SendAsync("ComplaintDeleted", id);
 
             return RedirectToAction("Index");
         }
@@ -196,14 +196,14 @@ namespace MVC_Project.Controllers
 
             _complaintService.UpdateComplaintDetails(id, complaint.Title, complaint.Description, complaint.Category);
 
-            // Save notification to DB so admin sees it in the bell dropdown
+            
             string message = $"Complaint #{id} was updated by {existing.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
 
-            // Push to admin bell live (same event as new complaint — reuses existing bell logic)
+          
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
 
-            // Update the admin's table row live without refresh
+            
             await _hubContext.Clients.All.SendAsync("ComplaintEdited", id, complaint.Title, complaint.Category);
 
             return RedirectToAction("Index");

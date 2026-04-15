@@ -7,7 +7,7 @@ namespace MVC_Project.Services
     {
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
-            var smtpClient = new SmtpClient("smtp.gmail.com")//connecting to the gmail server 
+            var smtpClient = new SmtpClient("smtp.gmail.com")
             {
                 Port = 587,
                 Credentials = new NetworkCredential("civicportal949@gmail.com", "ihcz fkgl vfhq ecge"),
