@@ -18,7 +18,7 @@ namespace MVC_Project.Services
             {
                 Message = message,
                 IsRead = false,
-                CreatedOn = DateTime.Now
+                CreatedOn = DateTime.UtcNow
             };
 
             _db.Notifications.Add(notification);

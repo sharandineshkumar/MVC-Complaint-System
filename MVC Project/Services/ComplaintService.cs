@@ -32,7 +32,7 @@ namespace MVC_Project.Services
         public void AddComplaint(Complaint complaint, string userName)
         {
             complaint.SubmittedBy = userName;
-            complaint.datetime = DateTime.Now;
+            complaint.datetime = DateTime.UtcNow;
             complaint.Status = "Pending";
 
             _db.Complaints.Add(complaint);
@@ -46,7 +46,7 @@ namespace MVC_Project.Services
 
             complaint.Status = newStatus;
             complaint.AdminNote = adminNote;
-            complaint.UpdatedOn = DateTime.Now;
+            complaint.UpdatedOn = DateTime.UtcNow;
 
             _db.SaveChanges();
         }
