@@ -33,7 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
             $"Database={uri.AbsolutePath.TrimStart('/')};" +
             $"Username={userInfo[0]};" +
             $"Password={userInfo[1]};" +
-            $"SSL Mode=Require;" +
+            $"SSL Mode=Disable;" +
             $"Trust Server Certificate=true;";
         options.UseNpgsql(npgsqlConnection);
     }
