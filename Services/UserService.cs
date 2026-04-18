@@ -20,7 +20,7 @@ namespace MVC_Project.Services
         public void RegisterUser(User user, string password)
         {
             user.PasswordHash = password;
-            user.CreatedOn = DateTime.Now;
+            user.CreatedOn = DateTime.UtcNow;
             user.Role = "Citizen";
 
             _db.Users.Add(user);

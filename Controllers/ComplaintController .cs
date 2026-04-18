@@ -76,7 +76,11 @@ namespace MVC_Project.Controllers
 
             string adminEmail = "civicadmin3@gmail.com";
             string subject = "New Complaint Submitted";
-            string complaintLink = $"https://localhost:7051/Complaints/Details/{complaint.Id}";
+           
+
+            var requestHost = $"{Request.Scheme}://{Request.Host}";
+            string complaintLink = $"{requestHost}/Complaints/Details/{complaint.Id}";
+
 
             string body = $@"
                                 <p><b>Title:</b> {complaint.Title}</p>

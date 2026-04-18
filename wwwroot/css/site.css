@@ -168,7 +168,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid var(--gov-border) !important;
     border-radius: var(--radius) !important;
     box-shadow: var(--shadow);
-    overflow: hidden;
+    overflow: visible;
     transition: var(--transition);
 }
 
@@ -376,6 +376,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .table thead tr {
     background: linear-gradient(135deg, var(--gov-blue), var(--gov-blue-light)) !important;
+    display: table-row !important;
+    visibility: visible !important;
 }
 
     .table thead tr th {
@@ -386,6 +388,9 @@ h1, h2, h3, h4, h5, h6 {
         text-transform: uppercase !important;
         padding: 14px 16px !important;
         border: none !important;
+        background: transparent !important;
+        display: table-cell !important;
+        visibility: visible !important;
     }
 
 .table tbody tr {
