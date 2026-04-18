@@ -24,12 +24,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (databaseUrl != null)
     {
-        // Render provides postgresql:// URL — add SSL for Render
-        options.UseNpgsql(databaseUrl);
+        // Convert postgresql:// URL to Npgsql format
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':');
+        var npgsqlConnection =
+            $"Host={uri.Host};" +
+            $"Port={uri.Port};" +
+            $"Database={uri.AbsolutePath.TrimStart('/')};" +
+            $"Username={userInfo[0]};" +
+            $"Password={userInfo[1]};" +
+            $"SSL Mode=Require;" +
+            $"Trust Server Certificate=true;";
+        options.UseNpgsql(npgsqlConnection);
     }
     else
     {
-        // Local → use SQL Server from appsettings.json
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("DefaultConnection"));
     }
