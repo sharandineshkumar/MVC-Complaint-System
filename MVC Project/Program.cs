@@ -24,17 +24,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (databaseUrl != null)
     {
-        // Convert postgresql:// URL to Npgsql format
         var uri = new Uri(databaseUrl);
         var userInfo = uri.UserInfo.Split(':');
+        var port = uri.Port > 0 ? uri.Port : 5432; // default PostgreSQL port
         var npgsqlConnection =
             $"Host={uri.Host};" +
-            $"Port={uri.Port};" +
+            $"Port={port};" +
             $"Database={uri.AbsolutePath.TrimStart('/')};" +
             $"Username={userInfo[0]};" +
             $"Password={userInfo[1]};" +
-            $"SSL Mode=Disable;" +
-            $"Trust Server Certificate=true;";
+            $"SSL Mode=Disable;";
         options.UseNpgsql(npgsqlConnection);
     }
     else
