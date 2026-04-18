@@ -66,7 +66,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ─── MIDDLEWARE PIPELINE ───────────────────────────────────────────────────
-app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
