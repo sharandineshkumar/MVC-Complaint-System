@@ -25,7 +25,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     if (databaseUrl != null)
     {
         // Render provides postgresql:// URL — add SSL for Render
-        options.UseNpgsql(databaseUrl + "?sslmode=require");
+        options.UseNpgsql(databaseUrl);
     }
     else
     {
