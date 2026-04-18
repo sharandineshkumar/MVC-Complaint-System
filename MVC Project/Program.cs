@@ -9,31 +9,39 @@ var builder = WebApplication.CreateBuilder(args);
 // Tell Npgsql to accept DateTime.Now (local time) without complaining
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-// ─── Read PORT from Railway environment (Railway assigns a random port) ───
-// If PORT env variable exists (on Railway), use it. Otherwise use 8080 locally.
+// ─── PORT SETUP ───────────────────────────────────────────────────────────
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// ─── Services ─────────────────────────────────────────────────────────────
+// ─── SERVICES ─────────────────────────────────────────────────────────────
 builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
-// ─── Database Setup ───────────────────────────────────────────────────────
-// Specifically: Railway gives us DATABASE_URL as an environment variable.
-// If that exists, use it. If not (running locally), fall back to appsettings.json.
-var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
-                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// ─── DATABASE SETUP ───────────────────────────────────────────────────────
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));  // UseNpgsql instead of UseSqlServer
+{
+    if (databaseUrl != null)
+    {
+        // Render provides postgresql:// URL — add SSL for Render
+        options.UseNpgsql(databaseUrl + "?sslmode=require");
+    }
+    else
+    {
+        // Local → use SQL Server from appsettings.json
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection"));
+    }
+});
 
-// ─── Your Custom Services ─────────────────────────────────────────────────
+// ─── YOUR CUSTOM SERVICES ─────────────────────────────────────────────────
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IComplaintService, ComplaintService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// ─── Cookie Authentication ────────────────────────────────────────────────
+// ─── COOKIE AUTHENTICATION ────────────────────────────────────────────────
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -43,24 +51,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
-// ─── Auto-Apply Migrations on Startup ────────────────────────────────────
-// Specifically: When app starts on Railway, this block automatically creates
-// all your tables in the PostgreSQL database. You don't need to run
-// "dotnet ef database update" manually on the server.
+// ─── AUTO-APPLY MIGRATIONS ON STARTUP ─────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
 
-// ─── Middleware Pipeline ───────────────────────────────────────────────────
+// ─── MIDDLEWARE PIPELINE ───────────────────────────────────────────────────
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ─── Routes ───────────────────────────────────────────────────────────────
+// ─── ROUTES ───────────────────────────────────────────────────────────────
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Complaints}/{action=Index}/{id?}");
