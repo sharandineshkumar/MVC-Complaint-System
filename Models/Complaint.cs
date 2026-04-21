@@ -11,16 +11,16 @@ namespace MVC_Project.Models
         public string Title { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Description is Required")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category is required")]
-        public string Category { get; set; }
+        public string Category { get; set; } = string.Empty;
 
         public string Status { get; set; } = "Pending";
 
         [Required(ErrorMessage ="your name is required")]
         [Display(Name="Submitted By")]
-        public string SubmittedBy { get; set; }
+        public string SubmittedBy { get; set; } = string.Empty;
 
         [Display(Name ="Submitted On")]
         public DateTime datetime { get; set; }
