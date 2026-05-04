@@ -127,7 +127,7 @@ if (bellBtn) {
         fetch('/Notifications/Delete?id=' + id, { method: 'POST' })
             .then(function () {
                 var item = document.getElementById('notif-' + id);
-                if (item) item.remove();git 
+                if (item) item.remove();
 
                 var list = document.getElementById('notifList');
                 if (list.children.length === 0) {
