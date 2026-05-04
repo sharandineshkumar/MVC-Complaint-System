@@ -39,7 +39,7 @@ namespace MVC_Project.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            if (User.IsInRole("Admin")) 
+            if (User.IsInRole("Admin"))
                 return RedirectToAction("Index");
 
             return View();
@@ -63,8 +63,7 @@ namespace MVC_Project.Controllers
 
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
 
-            await _hubContext.Clients.All.SendAsync("NewComplaintRow", new   
-
+            await _hubContext.Clients.All.SendAsync("NewComplaintRow", new
             {
                 id = complaint.Id,
                 title = complaint.Title,
@@ -73,27 +72,6 @@ namespace MVC_Project.Controllers
                 datetime = complaint.datetime.ToString("dd MMM yyyy"),
                 status = complaint.Status
             });
-
-            string adminEmail = "civicadmin3@gmail.com";
-            string subject = "New Complaint Submitted";
-           
-
-            var requestHost = $"{Request.Scheme}://{Request.Host}";
-            string complaintLink = $"{requestHost}/Complaints/Details/{complaint.Id}";
-
-
-            string body = $@"
-                                <p><b>Title:</b> {complaint.Title}</p>
-                                <p><b>Category:</b> {complaint.Category}</p>
-                                <p><b>Description:</b> {complaint.Description}</p>
-                                <p><b>Submitted By:</b> {complaint.SubmittedBy}</p>
-                                <p><b>Date:</b> {complaint.datetime}</p>
-                            <p>
-                               <b>View Complaint:</b> 
-                               <a href='{complaintLink}'>Click Here</a>
-                            </p>";
-
-            await _emailService.SendEmailAsync(adminEmail, subject, body);
 
             return RedirectToAction("RedirectToPortal", new
             {
@@ -200,14 +178,11 @@ namespace MVC_Project.Controllers
 
             _complaintService.UpdateComplaintDetails(id, complaint.Title, complaint.Description, complaint.Category);
 
-            
             string message = $"Complaint #{id} was updated by {existing.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
 
-          
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
 
-            
             await _hubContext.Clients.All.SendAsync("ComplaintEdited", id, complaint.Title, complaint.Category);
 
             return RedirectToAction("Index");
