@@ -48,31 +48,7 @@ Admins see every complaint in real time, update statuses, leave notes for citize
 
 ---
 
-## Getting Started
 
-**Prerequisites:** .NET 10 SDK · SQL Server Express · Visual Studio 2022
-
-```bash
-# 1. Clone
-git clone https://github.com/your-username/citizen-complaint-portal.git
-
-# 2. Update connection string in appsettings.json
-# Server=localhost\SQLEXPRESS;Database=ComplaintSystemDB;...
-
-# 3. Apply migrations
-dotnet ef database update
-
-# 4. Run
-dotnet run
-```
-
-To create an Admin account, register normally then run this in SSMS:
-
-```sql
-UPDATE Users SET Role = 'Admin' WHERE Email = 'your@email.com';
-```
-
----
 
 ## Project Structure
 
