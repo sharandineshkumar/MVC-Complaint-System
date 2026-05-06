@@ -78,4 +78,3 @@ Migrations/      → EF Core migration history
 
 ---
 
-> ⚠️ Built for learning. Passwords are stored as plain text — not suitable for production without proper hashing.
