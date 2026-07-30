@@ -1,0 +1,66 @@
+﻿@model Complaint
+
+@{
+    ViewData["Title"] = "Edit My Complaint";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Edit My Complaint</h4>
+                <a asp-controller="Complaints" asp-action="Index"
+                       class="btn btn-secondary btn-sm">
+                    Back to List
+                </a>
+            </div>
+            <div class="card-body">
+
+                <form method="post"
+                      asp-controller="Complaints"
+                      asp-action="CitizenEdit"
+                      asp-route-id="@Model.Id">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description"
+                                  class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label"></label>
+                        <select asp-for="Category" class="form-select">
+                            <option value="">-- Select Category --</option>
+                            <option value="Roads">Roads</option>
+                            <option value="Water">Water</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Sanitation">Sanitation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Category"
+                              class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save Changes
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
