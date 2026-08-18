@@ -4,6 +4,9 @@ using MVC_Project.Services;
 using MVC_Project.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
+// Prevent Linux inotify limit crash on container hosts like Render
+Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Tell Npgsql to accept DateTime.Now (local time) without complaining
