@@ -33,7 +33,7 @@
         <div class="container">
             <div class="d-flex align-items-center justify-content-between w-100 flex-wrap py-1">
                 <ul class="nav align-items-center flex-wrap">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Complaints" asp-action="Index">All Complaints</a>
@@ -48,10 +48,10 @@
                     }
                 </ul>
                 <ul class="nav align-items-center flex-wrap ms-sm-auto">
-                    @if (User.Identity.IsAuthenticated)
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <span class="user-info">Logged in as: <strong>@User.Identity.Name</strong></span>
+                            <span class="user-info">Logged in as: <strong>@User.Identity?.Name</strong></span>
                         </li>
 
                         @if (User.IsInRole("Admin"))

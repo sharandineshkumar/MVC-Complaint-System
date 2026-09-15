@@ -1,4 +1,4 @@
-﻿var connection = new signalR.HubConnectionBuilder()
+var connection = new signalR.HubConnectionBuilder()
     .withUrl("/notificationHub")
     .build();
 
@@ -37,6 +37,9 @@ connection.on("ComplaintEdited", function (id, newTitle, newCategory) {
 });
 
 connection.on("NewComplaintRow", function (c) {
+    // Only Admin table displays all real-time incoming complaints with admin actions
+    if (!document.getElementById('bellBtn')) return;
+
     var tbody = document.getElementById("complaintsTableBody");
     if (!tbody) return;
 

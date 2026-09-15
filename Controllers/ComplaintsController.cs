@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MVC_Project.Hubs;
@@ -12,18 +12,15 @@ namespace MVC_Project.Controllers
         private readonly IComplaintService _complaintService;
         private readonly IHubContext<NotificationHub> _hubContext;
         private readonly INotificationService _notificationService;
-        private readonly IEmailService _emailService;
 
         public ComplaintsController(
             IComplaintService complaintService,
             IHubContext<NotificationHub> hubContext,
-            INotificationService notificationService,
-            IEmailService emailService)
+            INotificationService notificationService)
         {
             _complaintService = complaintService;
             _hubContext = hubContext;
             _notificationService = notificationService;
-            _emailService = emailService;
         }
 
         [Authorize]
@@ -32,7 +29,7 @@ namespace MVC_Project.Controllers
             if (User.IsInRole("Admin"))
                 return View(_complaintService.GetAllComplaints());
 
-            var userName = User.Identity.Name;
+            var userName = User.Identity?.Name ?? string.Empty;
             return View(_complaintService.GetComplaintsByUser(userName));
         }
 
@@ -47,6 +44,7 @@ namespace MVC_Project.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Complaint complaint)
         {
             ModelState.Remove("Status");
@@ -56,7 +54,8 @@ namespace MVC_Project.Controllers
             if (!ModelState.IsValid)
                 return View(complaint);
 
-            _complaintService.AddComplaint(complaint, User.Identity.Name);
+            var userName = User.Identity?.Name ?? "Anonymous";
+            _complaintService.AddComplaint(complaint, userName);
 
             string message = $"New complaint submitted by {complaint.SubmittedBy}: {complaint.Title}";
             _notificationService.AddNotification(message);
@@ -106,6 +105,12 @@ namespace MVC_Project.Controllers
             if (complaint == null)
                 return NotFound();
 
+            // Broken access control check: only Admin or the complaint owner can view details
+            if (!User.IsInRole("Admin") && complaint.SubmittedBy != User.Identity?.Name)
+            {
+                return Forbid();
+            }
+
             return View(complaint);
         }
 
@@ -121,6 +126,7 @@ namespace MVC_Project.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Complaint complaint)
         {
             ModelState.Remove("Title");
@@ -137,6 +143,7 @@ namespace MVC_Project.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             _complaintService.DeleteComplaint(id);
@@ -151,6 +158,10 @@ namespace MVC_Project.Controllers
         {
             var complaint = _complaintService.GetComplaintById(id);
             if (complaint == null)
+                return NotFound();
+
+            // Only the owner can edit their own complaint
+            if (complaint.SubmittedBy != User.Identity?.Name)
                 return Forbid();
 
             if (complaint.Status != "Pending")
@@ -161,10 +172,15 @@ namespace MVC_Project.Controllers
 
         [Authorize]
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CitizenEdit(int id, Complaint complaint)
         {
             var existing = _complaintService.GetComplaintById(id);
             if (existing == null)
+                return NotFound();
+
+            // Only the owner can edit their own complaint
+            if (existing.SubmittedBy != User.Identity?.Name)
                 return Forbid();
 
             if (existing.Status != "Pending")
@@ -172,6 +188,7 @@ namespace MVC_Project.Controllers
 
             ModelState.Remove("Status");
             ModelState.Remove("SubmittedBy");
+            ModelState.Remove("datetime");
 
             if (!ModelState.IsValid)
                 return View(complaint);
@@ -188,6 +205,4 @@ namespace MVC_Project.Controllers
             return RedirectToAction("Index");
         }
     }
-}
-
-//this is controller checking line 
+} 

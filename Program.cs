@@ -25,18 +25,20 @@ var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    if (databaseUrl != null)
+    if (!string.IsNullOrWhiteSpace(databaseUrl))
     {
         var uri = new Uri(databaseUrl);
         var userInfo = uri.UserInfo.Split(':');
-        var port = uri.Port > 0 ? uri.Port : 5432; // default PostgreSQL port
+        var username = Uri.UnescapeDataString(userInfo[0]);
+        var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+        var port = uri.Port > 0 ? uri.Port : 5432;
         var npgsqlConnection =
             $"Host={uri.Host};" +
             $"Port={port};" +
             $"Database={uri.AbsolutePath.TrimStart('/')};" +
-            $"Username={userInfo[0]};" +
-            $"Password={userInfo[1]};" +
-            $"SSL Mode=Disable;";
+            $"Username={username};" +
+            $"Password={password};" +
+            $"SSL Mode=Require;Trust Server Certificate=true;";
         options.UseNpgsql(npgsqlConnection);
     }
     else
@@ -57,6 +59,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/Login";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.ExpireTimeSpan = TimeSpan.FromHours(8);
     });
 
@@ -77,6 +82,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ─── MIDDLEWARE PIPELINE ───────────────────────────────────────────────────
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 app.UseStaticFiles();
 app.UseRouting();

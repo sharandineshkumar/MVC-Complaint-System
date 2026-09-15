@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using MVC_Project.Models;
@@ -22,10 +22,13 @@ namespace MVC_Project.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(User user, string password)
+        [ValidateAntiForgeryToken]
+        public IActionResult Register(User user, string password)
         {
+            user.Role = "Citizen"; // Enforce Citizen role to prevent privilege escalation
             ModelState.Remove("PasswordHash");
             ModelState.Remove("CreatedOn");
+            ModelState.Remove("Role");
 
             if (!ModelState.IsValid)
                 return View(user);
@@ -47,6 +50,7 @@ namespace MVC_Project.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
             

@@ -1,4 +1,4 @@
-﻿using MVC_Project.Data;
+using MVC_Project.Data;
 using MVC_Project.Models;
 
 namespace MVC_Project.Services
@@ -59,7 +59,7 @@ namespace MVC_Project.Services
             complaint.Title = title;
             complaint.Description = description;
             complaint.Category = category;
-            complaint.UpdatedOn = DateTime.Now;
+            complaint.UpdatedOn = DateTime.UtcNow;
 
             _db.SaveChanges();
         }
