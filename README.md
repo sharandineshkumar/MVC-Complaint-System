@@ -54,41 +54,6 @@ Migrations/      → EF Core code-first database migrations
 
 ---
 
-## ⚙️ Getting Started
-
-### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [PostgreSQL](https://www.postgresql.org/download/)
-
-### Setup Instructions
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/sharandineshkumar/MVC-Complaint-System.git
-   cd MVC-Complaint-System
-   ```
-
-2. **Configure Database Connection:**
-   In `appsettings.json` (or `appsettings.Development.json`), configure your PostgreSQL connection string:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Host=localhost;Database=ComplaintSystemDB;Username=postgres;Password=YOUR_PASSWORD"
-   }
-   ```
-
-3. **Run Database Migrations:**
-   ```bash
-   dotnet ef database update
-   ```
-
-4. **Build and Run:**
-   ```bash
-   dotnet run
-   ```
-   Open your browser and navigate to `http://localhost:5000` (or the URL shown in the console).
-
----
-
 ## 👥 Role Permissions
 
 | Action | Citizen | Administrator |
